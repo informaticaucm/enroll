@@ -3,23 +3,24 @@ package modelo;
 public class Asignatura {
 	
 	private int curso; 			//primary
-	private String grupo; 		//primary
-	private String dia; 		//primary
+	private char grupo; 		//primary
+	private char dia; 		//primary
 	private int hora; 			//primary
 	private int cuatrimestre; 	//primary
 	private String nombre;
-	private String itinerario;
+	private char itinerario;
 	
-	public Asignatura(int curso, String grupo, String dia, int hora, int cuatrimestre, String nombre) {
+	public Asignatura(int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre) {
 		this.curso = curso;
 		this.grupo = grupo;
 		this.dia = dia;
 		this.hora = hora;
 		this.cuatrimestre = cuatrimestre;
 		this.nombre = nombre;
+		this.itinerario = ' ';
 	}
 
-	public Asignatura(int curso, String grupo, String dia, int hora, int cuatrimestre, String nombre, String itinerario) {
+	public Asignatura(int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre, char itinerario) {
 		this.curso = curso;
 		this.grupo = grupo;
 		this.dia = dia;
@@ -33,11 +34,11 @@ public class Asignatura {
 		return curso;
 	}
 
-	public String getGrupo() {
+	public char  getGrupo() {
 		return grupo;
 	}
 
-	public String getDia() {
+	public char getDia() {
 		return dia;
 	}
 
@@ -53,7 +54,7 @@ public class Asignatura {
 		return nombre;
 	}
 
-	public String getItinerario() {
+	public char getItinerario() {
 		return itinerario;
 	}
 	
