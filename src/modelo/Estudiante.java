@@ -58,7 +58,12 @@ public class Estudiante {
 	 * @return true si ya ha sido elegida.
 	 */
 	public boolean estaElegida(Asignatura a){
-		return this.eleccion.containsKey(a.getNombre());
+		Enumeration<String> e = this.eleccion.keys(); 
+		while(e.hasMoreElements()){
+			if(eleccion.get(e.nextElement()).getNombre().equalsIgnoreCase(a.getNombre()))
+				return true;
+		}
+		return false;
 	}
 	
 	/**
