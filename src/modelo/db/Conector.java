@@ -23,7 +23,7 @@ public class Conector {
 	 * Devuelve la conexión con la base de datos
 	 * @return La conexión si está creada o null en cualquier otro caso.
 	 */
-	public Connection getConector(){
+	public Connection getConexion(){
 		return this.con;
 	}
 	

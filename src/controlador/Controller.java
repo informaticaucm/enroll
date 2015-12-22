@@ -3,7 +3,7 @@ package controlador;
 import java.util.ArrayList;
 
 import modelo.Asignatura;
-import modelo.AsignaturaMapper;
+import modelo.Consultor;
 import modelo.Conflicto;
 import modelo.Estudiante;
 import modelo.Oferta;
@@ -14,13 +14,13 @@ public class Controller {
 	private Estudiante estudiante;
 	private Oferta oferta;
 	private Conector conector;
-	private AsignaturaMapper mapper;
+	private Consultor consultor;
 	
 	public Controller() {
 		this.estudiante = new Estudiante();
 		this.oferta = new Oferta();
 		this.conector = new Conector();
-		this.mapper = new AsignaturaMapper();
+		this.consultor = new Consultor(this.conector.getConexion());
 	}
 	
 	/**
