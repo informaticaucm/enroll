@@ -12,7 +12,10 @@ import java.util.Hashtable;
 public class Estudiante {
 
 	//Array<clave,valor> similares a los de PHP
-	private Hashtable<String, Asignatura> eleccion = new Hashtable<>();
+	private Hashtable<String, Asignatura> eleccion;
+	
+	// La clave será la letra del día y la hora (X9 -> Miércoles a las 9)
+	private Hashtable<String, Conflicto> conflictos;
 	
 	/**
 	 * Constructor.
@@ -20,6 +23,7 @@ public class Estudiante {
 	 */
 	public Estudiante() {
 		this.eleccion = new Hashtable<>();
+		this.conflictos = new Hashtable<>();
 	}
 	
 	/**
@@ -32,7 +36,17 @@ public class Estudiante {
 		
 		if(eleccion.contains(a.getNombre()))
 			return false;
-		
+
+		if(this.eleccion.containsKey(a.getNombre())){
+			String hora = ""+a.getDia()+a.getHora();
+			Conflicto con = new Conflicto(a, this.eleccion.get(a.getNombre()), hora);
+			
+			//Si se produce un conflicto, se almacena, pero no se devuelve error
+			if(this.conflictos.containsKey(hora))
+				this.conflictos.get(hora).addConflicto(a);
+			else
+				this.conflictos.put(hora, con);
+		}
 		this.eleccion.put(a.getNombre(), a);
 		
 		return exito;
@@ -76,13 +90,16 @@ public class Estudiante {
 	 * Si no hay conflictos, devuelve null
 	 * @return Un ArrayList con todos los conflictos en el horario del alumno
 	 */
-	//Incmpleto
 	public ArrayList<Conflicto> buscaConflictos(){
-		ArrayList<Conflicto> aux = null;
+		ArrayList<Conflicto> listado = new ArrayList<>();
 		
-		//Comprobación de conflictos -> Usar Hashtable<Hora,Asignatura>
+		//Iteramos por toda la tabla
+		Enumeration<String> e = this.conflictos.keys(); 
+		while(e.hasMoreElements()){
+			listado.add(this.conflictos.get(e.nextElement()));
+		}
 		
-		return aux;
+		return listado;
 	}
 	
 	/**
