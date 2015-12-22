@@ -3,6 +3,7 @@ package controlador;
 import java.util.ArrayList;
 
 import modelo.Asignatura;
+import modelo.AsignaturaMapper;
 import modelo.Conflicto;
 import modelo.Estudiante;
 import modelo.Oferta;
@@ -13,7 +14,14 @@ public class Controller {
 	private Estudiante estudiante;
 	private Oferta oferta;
 	private Conector conector;
+	private AsignaturaMapper mapper;
 	
+	public Controller() {
+		this.estudiante = new Estudiante();
+		this.oferta = new Oferta();
+		this.conector = new Conector();
+		this.mapper = new AsignaturaMapper();
+	}
 	
 	/**
 	 * Metodo encargado de iniciar la aplicación
@@ -36,7 +44,7 @@ public class Controller {
 	}
 	
 	//Estudiante
-	public boolean addAsignatura(Asignatura a){
+	public boolean addAsignaturaEstudiante(Asignatura a){
 		return this.estudiante.addAsignatura(a);
 	}
 	
@@ -57,12 +65,23 @@ public class Controller {
 	}
 	
 	//Oferta
+	public boolean addAsignaturaOferta(Asignatura a){
+		return this.oferta.addAsignatura(a);
+	}
 	
+	public int addAsignaturasOferta(ArrayList<Asignatura> listado){
+		return this.oferta.addAsignaturas(listado);
+	}
 	
+	public boolean quitaAsignaturaOferta(Asignatura a){
+		return this.oferta.quitaAsignatura(a);
+	}
 	
+	public void vaciaOferta(){
+		this.oferta.clear();
+	}
 	
-	
-	
+	//AsignaturaMapper
 	
 	
 /////////////////////
