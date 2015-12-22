@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
@@ -10,10 +11,11 @@ import java.util.Hashtable;
 public class Oferta {
 
 	//Array<clave,valor> similares a los de PHP
-	private Hashtable<String, Asignatura> eleccion = new Hashtable<>();
+	//String -> Nombre + Hora
+	private Hashtable<String, Asignatura> listado = new Hashtable<>();
 	
 	public Oferta() {
-		this.eleccion = new Hashtable<>();
+		this.listado = new Hashtable<>();
 	}
 	
 	/**
@@ -24,10 +26,10 @@ public class Oferta {
 	public boolean addAsignatura(Asignatura a){
 		boolean exito = true;
 		
-		if(eleccion.contains(a.getNombre()))
+		if(listado.contains(a.getNombre()))
 			return false;
 		
-		this.eleccion.put(a.getNombre(), a);
+		this.listado.put(a.getNombre()+a.getHora(), a);
 		
 		return exito;
 	}
@@ -42,22 +44,38 @@ public class Oferta {
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.eleccion.containsKey(a.getNombre()))
+			if(!this.listado.containsKey(a.getNombre()+a.getHora()))
 			{
-				this.eleccion.put(a.getNombre(), a);
+				this.listado.put(a.getNombre()+a.getHora(), a);
 				exitos++;
 			}
 		}
-		
 		return exitos;
 	}
 	
-	
+	/**
+	 * Elimina una asignatura de la lista de ofertadas
+	 * @param a
+	 * @return true si se pudo eliminar la materia del listado.
+	 */
+	public boolean quitaAsignatura(Asignatura a){
+		boolean eliminado = false;
+		
+		Enumeration<String> e = this.listado.keys();
+		while (e.hasMoreElements()) {
+			String clave = e.nextElement();
+			if(this.listado.get(clave).getNombre().equalsIgnoreCase(a.getNombre())){
+				this.listado.remove(clave);
+				eliminado = true;
+			}
+		}
+		return eliminado;
+	}
 	
 	/**
 	 * Elimina todas las asignaturas
 	 */
 	public void clear(){
-		this.eleccion.clear();
+		this.listado.clear();
 	}
 }
