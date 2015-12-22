@@ -9,21 +9,21 @@ import java.util.ArrayList;
 public class Conflicto {
 
 	private ArrayList<Asignatura> asignaturas;
-	private int hora;
+	private String hora;
 	
 	/**
 	 * Constructor que solo inicializa las variables
 	 */
 	public Conflicto() {
 		this.asignaturas = new ArrayList<>();
-		this.hora = 0;
+		this.hora = "";
 	}
 	
 	public ArrayList<Asignatura> getAsignaturas() {
 		return asignaturas;
 	}
 
-	public int getHora() {
+	public String getHora() {
 		return hora;
 	}
 
@@ -33,7 +33,7 @@ public class Conflicto {
 	 * @param b - Asignatura B
 	 * @param hora - Hora en cuestión
 	 */
-	public Conflicto(Asignatura a, Asignatura b, int hora){
+	public Conflicto(Asignatura a, Asignatura b, String hora){
 		this.asignaturas = new ArrayList<>();
 		this.asignaturas.add(a);
 		this.asignaturas.add(b);
@@ -47,8 +47,7 @@ public class Conflicto {
 	 */
 	public boolean addConflicto(Asignatura a){
 		
-		
-		
+		this.asignaturas.add(a);
 		
 		return true;
 	}
