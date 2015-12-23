@@ -40,7 +40,7 @@ public class Consultor {
 	 * Devuelve los cursos que tienen optativas de itinerario
 	 * @return Cursos con optativas de itinerario
 	 */
-	public ArrayList<Integer> cursosConOpIt(){
+	public ArrayList<Integer> getCursosConOpIt(){
 		ArrayList<Integer> cursos = new ArrayList<>();
 		
 		try
@@ -64,7 +64,7 @@ public class Consultor {
 	 * @param curso - Curso seleccionado
 	 * @return Grupos disponibles
 	 */
-	public ArrayList<String> gruposCursoSeleccionado(int curso){
+	public ArrayList<String> getGruposCursoSeleccionado(int curso){
 		ArrayList<String> grupos = new ArrayList<>();
 		
 		try
@@ -117,7 +117,7 @@ public class Consultor {
 	 * @param itinerario - Itinerario seleccionado
 	 * @return Grupos existentes relacionados
 	 */
-	public ArrayList<String> gruposCursoIt(int curso, char itinerario){
+	public ArrayList<String> getGruposCursoIt(int curso, char itinerario){
 		ArrayList<String> grupos = new ArrayList<>();
 		
 		try
