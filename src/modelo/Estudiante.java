@@ -12,9 +12,12 @@ import java.util.Hashtable;
 public class Estudiante {
 
 	//Array<clave,valor> similares a los de PHP
-	private Hashtable<String, Asignatura> eleccion;
+	private Hashtable<Integer, Asignatura> eleccion;
 	
-	// La clave será la letra del día y la hora (X9 -> Miércoles a las 9)
+	//Cuatrimestre-Dia-Hora (Ej. 1-X-19)
+	private ArrayList<String> horasOcupadas;
+	
+	// La clave será Cuatrimestre-Dia-Hora (Ej. 1-X-19)
 	private Hashtable<String, Conflicto> conflictos;
 	
 	/**
@@ -23,6 +26,7 @@ public class Estudiante {
 	 */
 	public Estudiante() {
 		this.eleccion = new Hashtable<>();
+		this.horasOcupadas = new ArrayList<>();
 		this.conflictos = new Hashtable<>();
 	}
 	
@@ -34,22 +38,60 @@ public class Estudiante {
 	public boolean addAsignatura(Asignatura a){
 		boolean exito = true;
 		
-		if(eleccion.contains(a.getNombre()))
+		if(eleccion.containsKey(a.getId()))
 			return false;
 
-		if(this.eleccion.containsKey(a.getNombre())){
-			String hora = ""+a.getDia()+a.getHora();
-			Conflicto con = new Conflicto(a, this.eleccion.get(a.getNombre()), hora);
+		String hora = a.getCuatrimestre()+"-"+a.getDia()+"-"+a.getHora();
+		
+		//Comprueba si alguna materia está ocupando esa hora
+		if(horaOcupada(hora)){
+			//Conflicto detectado -> se busca la clase 
+			Conflicto con = new Conflicto(a, buscaConflito(hora), hora);
 			
-			//Si se produce un conflicto, se almacena, pero no se devuelve error
+			//Si ya había conflicto, se añade la asignatura al conflicto. Si no, se crea
 			if(this.conflictos.containsKey(hora))
 				this.conflictos.get(hora).addConflicto(a);
 			else
 				this.conflictos.put(hora, con);
 		}
-		this.eleccion.put(a.getNombre(), a);
+		else
+			this.horasOcupadas.add(hora);
+		
+		this.eleccion.put(a.getId(), a);
 		
 		return exito;
+	}
+	
+	/**
+	 * Comprueba si una hora ya está siendo ocupada
+	 * @param hora - Hora a comprobar en formato <i>Cuatrimestre-Dia-Hora</i>
+	 * @return true si alguna materia elegida tiene clase a esa hora
+	 */
+	private boolean horaOcupada(String hora){
+		for(String s : this.horasOcupadas){
+			if(s.equalsIgnoreCase(hora))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Busca la materia con la que está en conflicto
+	 * @param hora - Hora a comprobar en formato <i>Cuatrimestre-Dia-Hora</i>
+	 * @return La asignatura con la que se está en conflicto o <b>null</b> si no hay conflicto
+	 */
+	private Asignatura buscaConflito(String hora){
+		Asignatura a = null;
+		String aux = "";
+		
+		Enumeration<Integer> e = this.eleccion.keys();
+		while (e.hasMoreElements()) {
+			a = this.eleccion.get(e.nextElement());
+			aux = a.getCuatrimestre() + "-" + a.getDia() + "-" + a.getHora();
+			if(aux.equalsIgnoreCase(hora))
+				return a;
+		}
+		return null;
 	}
 	
 	/**
@@ -58,9 +100,9 @@ public class Estudiante {
 	 * @return true si ya ha sido elegida.
 	 */
 	public boolean estaElegida(Asignatura a){
-		Enumeration<String> e = this.eleccion.keys(); 
+		Enumeration<Integer> e = this.eleccion.keys(); 
 		while(e.hasMoreElements()){
-			if(eleccion.get(e.nextElement()).getNombre().equalsIgnoreCase(a.getNombre()))
+			if(eleccion.get(e.nextElement()).getId() == a.getId())
 				return true;
 		}
 		return false;
@@ -74,7 +116,7 @@ public class Estudiante {
 		ArrayList<Asignatura> asignaturas = new ArrayList<>();
 		
 		//Iteramos por toda la tabla
-		Enumeration<String> e = this.eleccion.keys(); 
+		Enumeration<Integer> e = this.eleccion.keys(); 
 		while(e.hasMoreElements()){
 			asignaturas.add(this.eleccion.get(e.nextElement()));
 		}
@@ -95,7 +137,7 @@ public class Estudiante {
 	 * Si no hay conflictos, devuelve null
 	 * @return Un ArrayList con todos los conflictos en el horario del alumno
 	 */
-	public ArrayList<Conflicto> buscaConflictos(){
+	public ArrayList<Conflicto> getConflictos(){
 		ArrayList<Conflicto> listado = new ArrayList<>();
 		
 		//Iteramos por toda la tabla
@@ -108,9 +150,11 @@ public class Estudiante {
 	}
 	
 	/**
-	 * Elimina todas las elecciones del estudiante
+	 * Elimina todas las elecciones del estudiante, con ello los conflictos y las horas ocupadas
 	 */
-	public void clear(){
+	public void vaciaElecciones(){
 		this.eleccion.clear();
+		this.horasOcupadas.clear();
+		this.conflictos.clear();
 	}
 }
