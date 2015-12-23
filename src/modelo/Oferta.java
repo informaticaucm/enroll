@@ -26,7 +26,7 @@ public class Oferta {
 	public boolean addAsignatura(Asignatura a){
 		boolean exito = true;
 		
-		if(listado.contains(a.getNombre()+a.getDia()+a.getHora()))
+		if(listado.containsKey(a.getId()))
 			return false;
 		
 		this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
@@ -44,7 +44,7 @@ public class Oferta {
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.listado.containsKey(a.getNombre()+a.getDia()+a.getHora()))
+			if(!this.listado.contains(a.getId()))
 			{
 				this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
 				exitos++;

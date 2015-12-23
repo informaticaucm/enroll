@@ -2,6 +2,7 @@ package modelo;
 
 public class Asignatura {
 	
+	private int id;
 	private int curso; 			//primary
 	private char grupo; 		//primary
 	private char dia; 		//primary
@@ -10,7 +11,8 @@ public class Asignatura {
 	private String nombre;
 	private char itinerario;
 	
-	public Asignatura(int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre) {
+	public Asignatura(int id, int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre) {
+		this.id = id;
 		this.curso = curso;
 		this.grupo = grupo;
 		this.dia = dia;
@@ -20,7 +22,8 @@ public class Asignatura {
 		this.itinerario = ' ';
 	}
 
-	public Asignatura(int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre, char itinerario) {
+	public Asignatura(int id, int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre, char itinerario) {
+		this.id = id;
 		this.curso = curso;
 		this.grupo = grupo;
 		this.dia = dia;
@@ -28,6 +31,10 @@ public class Asignatura {
 		this.cuatrimestre = cuatrimestre;
 		this.nombre = nombre;
 		this.itinerario = itinerario;
+	}
+	
+	public int getId(){
+		return id;
 	}
 	
 	public int getCurso() {

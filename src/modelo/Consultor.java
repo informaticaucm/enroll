@@ -129,6 +129,7 @@ public class Consultor {
 	 */
 	private Asignatura build(ResultSet rs){
 		Asignatura a = null;
+		int id = 0;
 		int curso = 0;
 		char grupo = ' ';
 		char dia = ' ';
@@ -149,12 +150,10 @@ public class Consultor {
 		}catch(Exception e){}
 		if(minimo)
 			if(itinerario != ' ')
-				a = new Asignatura(curso, grupo, dia, hora, cuatrimestre, nombre, itinerario);
+				a = new Asignatura(id, curso, grupo, dia, hora, cuatrimestre, nombre, itinerario);
 			else
-				a = new Asignatura(curso, grupo, dia, hora, cuatrimestre, nombre);
+				a = new Asignatura(id, curso, grupo, dia, hora, cuatrimestre, nombre);
 		
 		return a;
 	}
-	
-	
 }
