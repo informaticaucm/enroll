@@ -24,7 +24,7 @@ public class Consultor {
 		{
 			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT curso FROM db WHERE curso != 0 ORDER BY curso;");
 			ResultSet rs = ps.executeQuery();
-			
+			 
 			while(rs.next()){
 				cursos.add(rs.getInt("curso"));
 			}
@@ -64,8 +64,8 @@ public class Consultor {
 	 * @param curso - Curso seleccionado
 	 * @return Grupos disponibles
 	 */
-	public ArrayList<Integer> gruposCursoSeleccionado(int curso){
-		ArrayList<Integer> cursos = new ArrayList<>();
+	public ArrayList<String> gruposCursoSeleccionado(int curso){
+		ArrayList<String> grupos = new ArrayList<>();
 		
 		try
 		{
@@ -74,14 +74,14 @@ public class Consultor {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				cursos.add(rs.getInt("grupo"));
+				grupos.add(rs.getString("grupo"));
 			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		return cursos;
+		return grupos;
 	}
 	
 	/**
@@ -91,7 +91,7 @@ public class Consultor {
 	 * @return Listado de asignaturas de ese curso y grupo
 	 */
 	public ArrayList<Asignatura> getAsignaturasCursoGrupo(int curso, char grupo){
-		ArrayList<Asignatura> cursos = new ArrayList<>();
+		ArrayList<Asignatura> grupos = new ArrayList<>();
 		
 		try
 		{
@@ -101,23 +101,94 @@ public class Consultor {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				cursos.add(build(rs));
+				grupos.add(build(rs));
 			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		return cursos;
+		return grupos;
 	}
 	
+	/**
+	 * Devuelve los grupos para el curso y el itinerario seleccionado
+	 * @param curso - Curso seleccionado
+	 * @param itinerario - Itinerario seleccionado
+	 * @return Grupos existentes relacionados
+	 */
+	public ArrayList<String> gruposCursoIt(int curso, char itinerario){
+		ArrayList<String> grupos = new ArrayList<>();
+		
+		try
+		{
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT grupo FROM db WHERE curso = ? AND itinerario = ?;");
+			ps.setInt(1, curso);
+			ps.setString(2, "" + itinerario);
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				grupos.add(rs.getString("grupo"));
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return grupos;
+	}
 	
+	/**
+	 * Devuelve las asignaturas que correspondan al curso, grupo e itinerario seleccionado
+	 * @param curso - Curso seleccionado
+	 * @param grupo - Grupo seleccionado
+	 * @param itinerario - Itinerario seleccionado
+	 * @return Lista con las asignaturas relacionadas
+	 */
+	public ArrayList<Asignatura> getOptativasCursoGrIt(int curso, char grupo, char itinerario){
+		ArrayList<Asignatura> optativas = new ArrayList<>();
+		
+		try
+		{
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = ? AND grupo = ? AND itinerario = ?;");
+			ps.setInt(1, curso);
+			ps.setString(2, ""+grupo);
+			ps.setString(3, ""+itinerario);
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				optativas.add(build(rs));
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return optativas;
+	}
 	
-	//obtener grupos existentes para el curso e itinerario seleccionado
-	
-	
-	//obtener optativas generales
-	
+	/**
+	 * Devuelve todas las optativas generales
+	 * @return Lista de optativas generales
+	 */
+	public ArrayList<Asignatura> getOptativasGenerales(){
+		ArrayList<Asignatura> optativas = new ArrayList<>();
+		
+		try
+		{
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = 0;");
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				optativas.add(build(rs));
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return optativas;
+	}
 	
 	
 	
