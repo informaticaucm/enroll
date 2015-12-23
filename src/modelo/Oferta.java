@@ -44,7 +44,7 @@ public class Oferta {
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.listado.contains(a.getId()))
+			if(!this.listado.containsKey(a.getId()))
 			{
 				this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
 				exitos++;
