@@ -74,7 +74,7 @@ public class Consultor {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				cursos.add(rs.getInt("curso"));
+				cursos.add(rs.getInt("grupo"));
 			}
 		}
 		catch(Exception e)
@@ -123,7 +123,7 @@ public class Consultor {
 	
 	
 	/**
-	 * Toma el ResultSet y devuelve la asignatura que est· apuntando
+	 * Toma el ResultSet y devuelve la asignatura que est√° apuntando
 	 * @param rs - ResultSet
 	 * @return Una Asignatura
 	 */
