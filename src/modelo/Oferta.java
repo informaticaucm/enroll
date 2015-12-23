@@ -26,7 +26,7 @@ public class Oferta {
 	public boolean addAsignatura(Asignatura a){
 		boolean exito = true;
 		
-		if(listado.contains(a.getNombre()))
+		if(listado.contains(a.getNombre()+a.getDia()+a.getHora()))
 			return false;
 		
 		this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
