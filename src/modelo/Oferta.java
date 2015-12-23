@@ -11,7 +11,7 @@ import java.util.Hashtable;
 public class Oferta {
 
 	//Array<clave,valor> similares a los de PHP
-	//String -> Nombre + Hora
+	//String -> Nombre + Dia + Hora
 	private Hashtable<String, Asignatura> listado = new Hashtable<>();
 	
 	public Oferta() {
@@ -19,9 +19,9 @@ public class Oferta {
 	}
 	
 	/**
-	 * Intenta añadir una asignatura al horario.<br/>
-	 * @param a - Asginatura a añadir
-	 * @return true si ha tenido éxito y false si ya había sido escogida.
+	 * Intenta aÃ±adir una asignatura al horario.<br/>
+	 * @param a - Asginatura a aÃ±adir
+	 * @return true si ha tenido Ã©xito y false si ya habÃ­a sido escogida.
 	 */
 	public boolean addAsignatura(Asignatura a){
 		boolean exito = true;
@@ -29,24 +29,24 @@ public class Oferta {
 		if(listado.contains(a.getNombre()))
 			return false;
 		
-		this.listado.put(a.getNombre()+a.getHora(), a);
+		this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
 		
 		return exito;
 	}
 	
 	/**
-	 * Intenta añadir un listado de asignaturas al horario.<br/>
-	 * @param listado - Asginaturas a añadir
-	 * @return Número de inserciones con éxito
+	 * Intenta aÃ±adir un listado de asignaturas al horario.<br/>
+	 * @param listado - Asginaturas a aÃ±adir
+	 * @return NÃºmero de inserciones con Ã©xito
 	 */
 	public int addAsignaturas(ArrayList<Asignatura> listado){
 		int exitos = 0;
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.listado.containsKey(a.getNombre()+a.getHora()))
+			if(!this.listado.containsKey(a.getNombre()+a.getDia()+a.getHora()))
 			{
-				this.listado.put(a.getNombre()+a.getHora(), a);
+				this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
 				exitos++;
 			}
 		}
