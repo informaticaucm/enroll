@@ -11,8 +11,7 @@ import java.util.Hashtable;
 public class Oferta {
 
 	//Array<clave,valor> similares a los de PHP
-	//String -> Nombre + Dia + Hora (Ej. ASORL16 -> ASOR Lunes a las 16)
-	private Hashtable<String, Asignatura> listado = new Hashtable<>();
+	private Hashtable<Integer, Asignatura> listado = new Hashtable<>();
 	
 	public Oferta() {
 		this.listado = new Hashtable<>();
@@ -29,7 +28,7 @@ public class Oferta {
 		if(listado.containsKey(a.getId()))
 			return false;
 		
-		this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
+		this.listado.put(a.getId(), a);
 		
 		return exito;
 	}
@@ -44,9 +43,9 @@ public class Oferta {
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.listado.contains(a.getId()))
+			if(!this.listado.containsKey(a.getId()))
 			{
-				this.listado.put(a.getNombre()+a.getDia()+a.getHora(), a);
+				this.listado.put(a.getId(), a);
 				exitos++;
 			}
 		}
@@ -61,9 +60,9 @@ public class Oferta {
 	public boolean quitaAsignatura(Asignatura a){
 		boolean eliminado = false;
 		
-		Enumeration<String> e = this.listado.keys();
+		Enumeration<Integer> e = this.listado.keys();
 		while (e.hasMoreElements()) {
-			String clave = e.nextElement();
+			int clave = e.nextElement();
 			if(this.listado.get(clave).getNombre().equalsIgnoreCase(a.getNombre())){
 				this.listado.remove(clave);
 				eliminado = true;
