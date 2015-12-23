@@ -56,12 +56,12 @@ public class Controller {
 		return this.estudiante.cuantasEscogidas();
 	}
 	
-	public ArrayList<Conflicto> buscaConflictos(){
-		return this.estudiante.buscaConflictos();
+	public ArrayList<Conflicto> getConflictos(){
+		return this.estudiante.getConflictos();
 	}
 	
 	public void vaciaEscogidas(){
-		this.estudiante.clear();
+		this.estudiante.vaciaElecciones();
 	}
 	
 	//Oferta
