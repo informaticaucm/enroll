@@ -11,7 +11,7 @@ import java.util.Hashtable;
 public class Oferta {
 
 	//Array<clave,valor> similares a los de PHP
-	//String -> Nombre + Dia + Hora
+	//String -> Nombre + Dia + Hora (Ej. ASORL16 -> ASOR Lunes a las 16)
 	private Hashtable<String, Asignatura> listado = new Hashtable<>();
 	
 	public Oferta() {
