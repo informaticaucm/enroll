@@ -20,13 +20,21 @@ public class Controller {
 		this.estudiante = new Estudiante();
 		this.oferta = new Oferta();
 		this.conector = new Conector();
-		this.consultor = new Consultor(this.conector.getConexion());
+		this.consultor = new Consultor();
 	}
 	
 	/**
 	 * Metodo encargado de iniciar la aplicación
 	 */
 	public void run(){
+		
+		
+		//Conecta a la BBDD
+		
+		//Prepara la información inicial de la ventana
+		
+		//Muestra la ventana
+		
 		
 	}
 	

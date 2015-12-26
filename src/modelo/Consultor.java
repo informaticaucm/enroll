@@ -9,10 +9,12 @@ public class Consultor {
 
 	private Connection con;
 	
-	public Consultor(Connection con) {
+	public Consultor() {	}
+
+	public void setConnection(Connection con){
 		this.con = con;
 	}
-	
+		
 	/**
 	 * Devuelve los cursos disponibles
 	 * @return Cursos disponibles
