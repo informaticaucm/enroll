@@ -102,7 +102,12 @@ public class Consultor {
 		
 		try
 		{
-			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = ? AND grupo = ? AND itinerario != ? ORDER BY asignatura;");
+			PreparedStatement ps = null;
+			if(curso < 3)
+				ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = ? AND grupo = ? AND itinerario != ? ORDER BY asignatura;");
+			else
+				ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE (curso = ? AND grupo = ? AND itinerario != ?) OR curso = 0 ORDER BY asignatura;");
+			
 			ps.setInt(1, curso);
 			ps.setString(2, ""+grupo);
 			ps.setString(3, ""+noIt);
@@ -110,7 +115,7 @@ public class Consultor {
 			
 			while(rs.next()){
 				Asignatura a = build(rs);
-				System.out.println("ID: " + a.getId() + ", Nombre: " + a.getNombre() + ", Grupo: " + a.getGrupo() + ", Dia: " + a.getDia() + ", Hora: " + a.getHora());
+				//System.out.println("ID: " + a.getId() + ", Nombre: " + a.getNombre() + ", Grupo: " + a.getGrupo() + ", Dia: " + a.getDia() + ", Hora: " + a.getHora());
 				oferta.addNombreOfertada(a.getNombre());
 				oferta.addAsignatura(a);
 			}
