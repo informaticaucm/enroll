@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.FlowLayout;
 import javax.swing.JRadioButton;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.UIManager;
@@ -69,6 +70,8 @@ public class Ventana extends JFrame {
 	private JList<String> listaAsignaturas;
 	
 	private Oferta oferta;
+	
+	
 	
 	/**
 	 * Create the frame.
@@ -353,6 +356,14 @@ public class Ventana extends JFrame {
 		});
 		panel_4.add(btnEliminarTodas);
 		
+		JButton btnExportarHorario = new JButton("Exportar horario");
+		btnExportarHorario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				exportaHorario();
+			}
+		});
+		panel_4.add(btnExportarHorario);
+		
 		 try {
 	            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 	            SwingUtilities.updateComponentTreeUI(this);
@@ -558,10 +569,22 @@ public class Ventana extends JFrame {
 	}
 	
 	private void updateTablas(){
-		DefaultTableModel dtm1 = new DefaultTableModel(this.c.getArrayAsignaturasEstudiante(1), columnas);
+		DefaultTableModel dtm1 = new DefaultTableModel(this.c.getArrayAsignaturasEstudiante(1), columnas){
+			private static final long serialVersionUID = -4643051052426062178L;
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		       return false;
+		    }
+		};
 		this.primerQ.setModel(dtm1);
 		
-		DefaultTableModel dtm2 = new DefaultTableModel(this.c.getArrayAsignaturasEstudiante(2), columnas);
+		DefaultTableModel dtm2 = new DefaultTableModel(this.c.getArrayAsignaturasEstudiante(2), columnas){
+			private static final long serialVersionUID = -4643051052426062179L;
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		       return false;
+		    }
+		};
 		this.segundoQ.setModel(dtm2);
 	}
 	
@@ -654,35 +677,19 @@ public class Ventana extends JFrame {
 		
 		return coord;
 	}
-	/*Para modificar las tablas de los horarios
-	 * 
-	 * primerQ.setCellSelectionEnabled(true);
-		primerQ.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"9", null, null, null, null, null},
-				{"10", null, null, null, null, null},
-				{"11", null, null, null, null, null},
-				{"12", null, null, null, null, null},
-				{"13", null, null, null, null, null},
-				{"14", null, null, null, null, null},
-				{"15", null, null, null, null, null},
-				{"16", null, null, null, null, null},
-				{"17", null, null, null, null, null},
-				{"18", null, null, null, null, null},
-				{"19", null, null, null, null, null},
-				{"20", null, null, null, null, null},
-			},
-			new String[] {
-				"Hora", "lunes", "martes", "miercoles", "jueves", "viernes"
-			}
-		){
-			private static final long serialVersionUID = -4643051052426062178L;
-			@Override
-		    public boolean isCellEditable(int row, int column) {
-		       return false;
-		    }
-		});
-		primerQ.getTableHeader().setReorderingAllowed(false);
-	 */
+	
+	private void exportaHorario(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+        chooser.setDialogTitle("Selecciona la carpeta de destino");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+         
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.c.exportarHorarios(chooser.getSelectedFile());
+        }
+        else {}
+    }
+	
 	
 }

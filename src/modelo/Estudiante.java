@@ -1,5 +1,7 @@
 package modelo;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -258,5 +260,47 @@ public class Estudiante {
 		this.eleccion.clear();
 		this.horasOcupadas.clear();
 		this.conflictos.clear();
+	}
+
+	public void exportHorario(File file) {
+		PrintStream  ps = null;
+		try{
+			if(file.getAbsolutePath().charAt(file.getAbsolutePath().length()-1) == '/' || file.getAbsolutePath().charAt(file.getAbsolutePath().length()-1) == '\\')
+				ps = new PrintStream(file + "horario.csv");
+			else
+				ps = new PrintStream(file + "\\horario.csv");
+			for(String s : preparaLineasExcel(1))
+				ps.println(s);
+			
+			ps.println(";;;;;");
+			ps.println(";;;;;");
+			
+			for(String s : preparaLineasExcel(2))
+				ps.println(s);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally{
+			if(ps != null)
+				ps.close();
+		}
+	}
+	
+	private ArrayList<String> preparaLineasExcel(int cuatrimestre){
+		ArrayList<String> lineas = new ArrayList<>();
+		String q1[][] = getArrayAsignaturas(cuatrimestre);
+		if(cuatrimestre == 1)
+			lineas.add(";;Primer;Cuatrimestre;;");
+		else
+			lineas.add(";;Segundo;Cuatrimestre;;");
+		lineas.add("Hora;Lunes;Martes;Miércoles;Jueves;Viernes");
+		for(int i = 1; i < 12; i++){
+			String linea = q1[i][0] + ";" + q1[i][1] + ";" + q1[i][2] + ";" + q1[i][3] + ";" + q1[i][4] + ";" + q1[i][5];
+			lineas.add(linea);
+		}
+		
+		return lineas;
 	}
 }

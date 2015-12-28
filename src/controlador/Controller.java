@@ -1,5 +1,6 @@
 package controlador;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import modelo.Asignatura;
@@ -147,12 +148,13 @@ public class Controller {
 	}
 	
 	
-	
 /////////////////////
 ////    Vista    ////
 /////////////////////
 	
-	
+	public void exportarHorarios(File file) {
+		this.estudiante.exportHorario(file);
+	}
 	
 	
 }
