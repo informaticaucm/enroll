@@ -8,6 +8,7 @@ import modelo.Conflicto;
 import modelo.Estudiante;
 import modelo.Oferta;
 import modelo.db.Conector;
+import vista.Ventana;
 
 public class Controller {
 
@@ -27,14 +28,16 @@ public class Controller {
 	 * Metodo encargado de iniciar la aplicación
 	 */
 	public void run(){
-		
+		Ventana v = new Ventana();
+		v.setController(this);
+		v.setLocationRelativeTo(null);
 		
 		//Conecta a la BBDD
+		this.conector.openConnection();
+		this.consultor.setConnection(this.conector.getConexion());
 		
-		//Prepara la información inicial de la ventana
-		
-		//Muestra la ventana
-		
+		//Prepara la información inicial de la ventana y la muestra
+		v.run();
 		
 	}
 	
@@ -56,15 +59,19 @@ public class Controller {
 		return this.estudiante.addAsignatura(a);
 	}
 	
-	public boolean estaElegida(Asignatura a){
+	public boolean estaElegidaEstudiante(Asignatura a){
 		return this.estudiante.estaElegida(a);
 	}
 	
-	public ArrayList<Asignatura> getAsignaturas(){
+	public ArrayList<Asignatura> getAsignaturasEstudiante(){
 		return this.estudiante.getEleccion();
 	}
 	
-	public int totalEscogidas(){
+	public String[][] getArrayAsignaturasEstudiante(int cuatrimestre){
+		return this.estudiante.getArrayAsignaturas(cuatrimestre);
+	}
+	
+	public int totalEscogidasEstudiante(){
 		return this.estudiante.cuantasEscogidas();
 	}
 	
@@ -72,7 +79,11 @@ public class Controller {
 		return this.estudiante.getConflictos();
 	}
 	
-	public void vaciaEscogidas(){
+	public boolean quitaAsignaturaEstudiante(String nombre){
+		return this.estudiante.quitaAsignatura(nombre);
+	}
+	
+	public void vaciaEscogidasEstudiante(){
 		this.estudiante.vaciaElecciones();
 	}
 	
@@ -85,8 +96,16 @@ public class Controller {
 		return this.oferta.addAsignaturas(listado);
 	}
 	
+	public ArrayList<Asignatura> getAsignaturasOferta(int curso, char grupo, char itinerario, String nombre){
+		return this.oferta.getAsignatura(curso, grupo, itinerario, nombre);
+	}
+	
 	public boolean quitaAsignaturaOferta(Asignatura a){
 		return this.oferta.quitaAsignatura(a);
+	}
+	
+	public boolean quitaAsignaturaOferta(String nombre){
+		return this.oferta.quitaAsignatura(nombre);
 	}
 	
 	public void vaciaOferta(){
@@ -94,31 +113,36 @@ public class Controller {
 	}
 	
 	//Consultor
-	public ArrayList<Asignatura> getAsignaturasCursoGrupo(int curso, char grupo){
-		return this.consultor.getAsignaturasCursoGrupo(curso, grupo);
+	public Oferta consultaAsignaturasCursoGrupo(int curso, char grupo, char itinerario){
+		this.oferta = this.consultor.getAsignaturasCursoGrupo(curso, grupo, itinerario); 
+		return this.oferta;
 	}
 	
-	public ArrayList<Integer> getCursos(){
+	public ArrayList<String> consultaListadoAsignaturasCursoGrupo(int curso, char grupo){
+		return this.consultor.getListadoAsignaturasCursoGrupo(curso, grupo);
+	}
+	
+	public ArrayList<Integer> consultaCursos(){
 		return this.consultor.getCursos();
 	}
 	
-	public ArrayList<Integer> getCursosConOpIt(){
+	public ArrayList<Integer> consultaCursosConOpIt(){
 		return this.consultor.getCursosConOpIt();
 	}
 	
-	public ArrayList<Asignatura> getOptativasCursoGrIt(int curso, char grupo, char itinerario){
+	public ArrayList<Asignatura> consultaOptativasCursoGrIt(int curso, char grupo, char itinerario){
 		return this.consultor.getOptativasCursoGrIt(curso, grupo, itinerario);
 	}
 	
-	public ArrayList<Asignatura> getOptativasGenerales(){
+	public ArrayList<Asignatura> consultaOptativasGenerales(){
 		return this.consultor.getOptativasGenerales();
 	}
 	
-	public ArrayList<String> getGruposCursoIt(int curso, char itinerario){
+	public ArrayList<String> consultaGruposCursoIt(int curso, char itinerario){
 		return this.consultor.getGruposCursoIt(curso, itinerario);
 	}
 	
-	public ArrayList<String> gruposCursoSeleccionado(int curso){
+	public ArrayList<String> consultaGruposCursoSeleccionado(int curso){
 		return this.consultor.getGruposCursoSeleccionado(curso);
 	}
 	

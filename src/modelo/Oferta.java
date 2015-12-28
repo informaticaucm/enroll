@@ -11,10 +11,38 @@ import java.util.Hashtable;
 public class Oferta {
 
 	//Array<clave,valor> similares a los de PHP
-	private Hashtable<Integer, Asignatura> listado = new Hashtable<>();
+	private Hashtable<Integer, Asignatura> listado;
+	
+	private ArrayList<String> nombresOfertadas;
 	
 	public Oferta() {
 		this.listado = new Hashtable<>();
+		this.nombresOfertadas = new ArrayList<>();
+	}
+	
+	public boolean addNombreOfertada(String nombre){
+		if(estaInsertada(nombre))
+			return false;
+		this.nombresOfertadas.add(nombre);
+		return true;
+	}
+	
+	public ArrayList<String> getListadoOfertadas(){
+		return this.nombresOfertadas;
+	}
+	
+	/**
+	 * Comprueba si una asignatura ya ha sido insertada en nombresOfertadas.<br/>
+	 * @param a - Asignatura a comprobar
+	 * @return true si ya ha sido elegida.
+	 */
+	public boolean estaInsertada(String nombre){
+		Enumeration<Integer> e = this.listado.keys(); 
+		while(e.hasMoreElements()){
+			if(listado.get(e.nextElement()).getNombre().equalsIgnoreCase(nombre))
+				return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -31,6 +59,35 @@ public class Oferta {
 		this.listado.put(a.getId(), a);
 		
 		return exito;
+	}
+	
+	/**
+	 * Devuelve un listado con todas las entradas de horario de la materia del curso, grupo e itinerario indicados 
+	 * @param curso - Curso indicado
+	 * @param grupo - Grupo indicado
+	 * @param itinerario - Itinerario indicado
+	 * @return ArrayList con las entradas de horario
+	 */
+	public ArrayList<Asignatura> getAsignatura(int curso, char grupo, char itinerario, String nombre){
+		ArrayList<Asignatura> entradas = new ArrayList<>();
+		
+		char noIt = ' '; //Itinerario opuesto al escogido
+		if(itinerario == 'I')
+			noIt = 'C';
+		else
+			noIt = 'I';
+		
+		Enumeration<Integer> e = this.listado.keys(); 
+		while(e.hasMoreElements()){
+			Asignatura a = this.listado.get(e.nextElement());
+			if(a.getCurso() == curso) //Curso
+				if(a.getGrupo() == grupo) //Grupo
+					if(a.getItinerario() != noIt) //!=Itinerario
+						if(a.getNombre().equalsIgnoreCase(nombre)) //Nombre
+							entradas.add(a);
+		}
+		
+		return entradas;
 	}
 	
 	/**
@@ -54,7 +111,7 @@ public class Oferta {
 	
 	/**
 	 * Elimina una asignatura de la lista de ofertadas
-	 * @param a
+	 * @param a - La asignatura completa
 	 * @return true si se pudo eliminar la materia del listado.
 	 */
 	public boolean quitaAsignatura(Asignatura a){
@@ -64,6 +121,25 @@ public class Oferta {
 		while (e.hasMoreElements()) {
 			int clave = e.nextElement();
 			if(this.listado.get(clave).getNombre().equalsIgnoreCase(a.getNombre())){
+				this.listado.remove(clave);
+				eliminado = true;
+			}
+		}
+		return eliminado;
+	}
+	
+	/**
+	 * Elimina una asignatura de la lista de ofertadas
+	 * @param nombre - El nombre de la asignatura a borrar
+	 * @return true si se pudo eliminar la materia del listado.
+	 */
+	public boolean quitaAsignatura(String nombre){
+		boolean eliminado = false;
+		
+		Enumeration<Integer> e = this.listado.keys();
+		while (e.hasMoreElements()) {
+			int clave = e.nextElement();
+			if(this.listado.get(clave).getNombre().equalsIgnoreCase(nombre)){
 				this.listado.remove(clave);
 				eliminado = true;
 			}

@@ -3,7 +3,7 @@ package modelo.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.*;
 
 /**
  * Clase encargada de conectar a la BD MySQL y de mantener la conexión abierta
@@ -35,9 +35,9 @@ public class Conector {
             try{
                 this.ds = new  ComboPooledDataSource();
                 this.ds.setDriverClass("org.gjt.mm.mysql.Driver");
-                this.ds.setJdbcUrl("jdbc:mysql://localhost/db");
-                this.ds.setUser("elp");
-                this.ds.setPassword("elppass");
+                this.ds.setJdbcUrl("jdbc:mysql://localhost/aplicacion");
+                this.ds.setUser("aplicacion");
+                this.ds.setPassword("SHVBzh2Q93CUGJhU");
                      
                 this.con = ds.getConnection();
             }

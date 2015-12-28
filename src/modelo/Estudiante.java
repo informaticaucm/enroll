@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -102,7 +103,7 @@ public class Estudiante {
 	public boolean estaElegida(Asignatura a){
 		Enumeration<Integer> e = this.eleccion.keys(); 
 		while(e.hasMoreElements()){
-			if(eleccion.get(e.nextElement()).getId() == a.getId())
+			if(eleccion.get(e.nextElement()).getNombre().equalsIgnoreCase(a.getNombre()))
 				return true;
 		}
 		return false;
@@ -147,6 +148,107 @@ public class Estudiante {
 		}
 		
 		return listado;
+	}
+	
+	/**
+	 * Devuelve una tabla con las materias elegidas que correspondan al cuatrimestre indicado
+	 * @param cuatrimestre - El cuatrimestre indicado
+	 * @return String[][] con las Asignaturas seleccionadas
+	 */
+	public String[][] getArrayAsignaturas(int cuatrimestre){
+		String tabla[][] = new String[12][6];
+		
+		//Llena todas las casillas con ""
+		for (String[] row: tabla)
+			Arrays.fill(row, "");
+		
+		//[Fila][Columna]
+		//Inicialuizamos las horas
+		tabla[0][0] = "9";
+		tabla[1][0] = "10";
+		tabla[2][0] = "11";
+		tabla[3][0] = "12";
+		tabla[4][0] = "13";
+		tabla[5][0] = "14";
+		tabla[6][0] = "15";
+		tabla[7][0] = "16";
+		tabla[8][0] = "17";
+		tabla[9][0] = "18";
+		tabla[10][0] = "19";
+		tabla[11][0] = "20";
+		
+		int[] coord;
+		String aux;
+		for(Asignatura a : getEleccion()){
+			if(a.getCuatrimestre() == cuatrimestre)
+			{
+				coord = getCoordenadasTabla(a);
+				aux = tabla[coord[0]][coord[1]];
+				if(aux.length() == 0)
+					tabla[coord[0]][coord[1]] += a.getNombre();
+				else
+					tabla[coord[0]][coord[1]] += " - " + a.getNombre();
+			}
+		}
+		return tabla;
+	}
+	
+	/**
+	 * Elimina una asignatura de la lista de ofertadas
+	 * @param nombre - El nombre de la asignatura a borrar
+	 * @return true si se pudo eliminar la materia del listado.
+	 */
+	public boolean quitaAsignatura(String nombre){
+		boolean eliminado = false;
+		
+		Enumeration<Integer> e = this.eleccion.keys();
+		while (e.hasMoreElements()) {
+			int clave = e.nextElement();
+			if(this.eleccion.get(clave).getNombre().equalsIgnoreCase(nombre)){
+				this.eleccion.remove(clave);
+				eliminado = true;
+			}
+		}
+		return eliminado;
+	}
+	
+	/**
+	 * Devuelve la casilla de la tabla en la que tiene que estar la asignatura
+	 * @param a - La asignatura
+	 * @return coord[0] es el día, coord[1] es la hora
+	 */
+	private int[] getCoordenadasTabla(Asignatura a){
+		int coord[] = new int[2];
+		
+		String dia = ""+ a.getDia();
+		int hora = a.getHora();
+		
+		switch (dia.toLowerCase()) {
+			case "l": coord[1] = 1; break;
+			case "m": coord[1] = 2; break;
+			case "x": coord[1] = 3; break;
+			case "j": coord[1] = 4; break;
+			case "v": coord[1] = 5; break;
+			default : break;
+		}		
+		
+		switch (hora) {
+			case 9:  coord[0] = 1; break;
+			case 10: coord[0] = 2; break;
+			case 11: coord[0] = 3; break;
+			case 12: coord[0] = 4; break;
+			case 13: coord[0] = 5; break;
+			case 14: coord[0] = 6; break;
+			case 15: coord[0] = 7; break;
+			case 16: coord[0] = 8; break;
+			case 17: coord[0] = 9; break;
+			case 18: coord[0] = 10; break;
+			case 19: coord[0] = 11; break;
+			case 20: coord[0] = 12; break;
+			default : break;
+		}
+		
+		return coord;
 	}
 	
 	/**

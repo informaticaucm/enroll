@@ -92,18 +92,54 @@ public class Consultor {
 	 * @param grupo - grupo seleccionado
 	 * @return Listado de asignaturas de ese curso y grupo
 	 */
-	public ArrayList<Asignatura> getAsignaturasCursoGrupo(int curso, char grupo){
-		ArrayList<Asignatura> grupos = new ArrayList<>();
+	public Oferta getAsignaturasCursoGrupo(int curso, char grupo, char itinerario){
+		Oferta oferta = new Oferta();
+		String noIt = ""; //Itinerario opuesto al escogido
+		if(itinerario == 'I')
+			noIt = "C";
+		else
+			noIt = "I";
 		
 		try
 		{
-			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = ? AND grupo = ? AND itinerario NOT IN ('I','C');");
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT * FROM db WHERE curso = ? AND grupo = ? AND itinerario != ? ORDER BY asignatura;");
+			ps.setInt(1, curso);
+			ps.setString(2, ""+grupo);
+			ps.setString(3, ""+noIt);
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				Asignatura a = build(rs);
+				System.out.println("ID: " + a.getId() + ", Nombre: " + a.getNombre() + ", Grupo: " + a.getGrupo() + ", Dia: " + a.getDia() + ", Hora: " + a.getHora());
+				oferta.addNombreOfertada(a.getNombre());
+				oferta.addAsignatura(a);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return oferta;
+	}
+	
+	/**
+	 * Devuelve las asignaturas de un curso y grupo especificados
+	 * @param curso - Curso seleccionado
+	 * @param grupo - grupo seleccionado
+	 * @return Listado de asignaturas de ese curso y grupo
+	 */
+	public ArrayList<String> getListadoAsignaturasCursoGrupo(int curso, char grupo){
+		ArrayList<String> grupos = new ArrayList<>();
+		
+		try
+		{
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT asignatura FROM db WHERE curso = ? AND grupo = ? AND itinerario NOT IN ('I','C') ORDER BY asignatura;");
 			ps.setInt(1, curso);
 			ps.setString(2, ""+grupo);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				grupos.add(build(rs));
+				grupos.add(rs.getString("asignatura"));
 			}
 		}
 		catch(Exception e)
@@ -124,7 +160,7 @@ public class Consultor {
 		
 		try
 		{
-			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT grupo FROM db WHERE curso = ? AND itinerario = ?;");
+			PreparedStatement ps = this.con.prepareStatement("SELECT DISTINCT grupo FROM db WHERE curso = ? AND itinerario = ? ORDER BY grupo;");
 			ps.setInt(1, curso);
 			ps.setString(2, "" + itinerario);
 			ResultSet rs = ps.executeQuery();
@@ -212,12 +248,13 @@ public class Consultor {
 		char itinerario = ' ';
 		boolean minimo = false;
 		try{
+			id = rs.getInt("id");
 			curso = rs.getInt("curso");
 			grupo = rs.getString("grupo").trim().charAt(0);
 			dia = rs.getString("dia").trim().charAt(0);
 			hora = rs.getInt("hora");
 			cuatrimestre = rs.getInt("cuatrimestre");
-			nombre = rs.getString("nombre");
+			nombre = rs.getString("asignatura");
 			minimo = true;
 			itinerario = rs.getString("itinerario").trim().charAt(0);
 		}catch(Exception e){}
