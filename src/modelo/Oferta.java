@@ -66,6 +66,7 @@ public class Oferta {
 	 * @param curso - Curso indicado
 	 * @param grupo - Grupo indicado
 	 * @param itinerario - Itinerario indicado
+	 * @param nombre - Nombre de la asignatura
 	 * @return ArrayList con las entradas de horario
 	 */
 	public ArrayList<Asignatura> getAsignatura(int curso, char grupo, char itinerario, String nombre){
