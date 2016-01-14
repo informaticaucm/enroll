@@ -474,6 +474,13 @@ public class Ventana extends JFrame {
 	
 	private void setListaAsignaturas(){
 		DefaultListModel<String> lm = new DefaultListModel<>();
+		
+		int auxCurso = Integer.parseInt(this.curso);
+		char auxGrupo = this.grupo.charAt(0);
+		char auxItinerario = this.itinerario.charAt(0);
+		
+		this.oferta = this.c.consultaAsignaturasCursoGrupo(auxCurso, auxGrupo, auxItinerario);
+		
 		for(String a : this.oferta.getListadoOfertadas()){
 			lm.addElement(a);
 		}

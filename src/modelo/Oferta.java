@@ -61,6 +61,26 @@ public class Oferta {
 		return exito;
 	}
 	
+	public ArrayList<Asignatura> getAsignaturasCursoGrupoIt(int curso, char grupo, char itinerario){
+ArrayList<Asignatura> entradas = new ArrayList<>();
+		
+		char noIt = ' '; //Itinerario opuesto al escogido
+		if(itinerario == 'I')
+			noIt = 'C';
+		else
+			noIt = 'I';
+		Enumeration<Integer> e = this.listado.keys(); 
+		while(e.hasMoreElements()){
+			Asignatura a = this.listado.get(e.nextElement());
+			if(a.getCurso() == curso || a.getCurso() == 0) //Curso 
+				if(a.getGrupo() == grupo || a.getCurso() == 0) //Grupo -> En caso de ser general, solo suele haber grupo A
+					if(a.getItinerario() != noIt) //!=Itinerario
+							entradas.add(a);
+		}
+		
+		return entradas;
+	}
+	
 	/**
 	 * Devuelve un listado con todas las entradas de horario de la materia del curso, grupo e itinerario indicados 
 	 * @param curso - Curso indicado
@@ -77,12 +97,11 @@ public class Oferta {
 			noIt = 'C';
 		else
 			noIt = 'I';
-		
 		Enumeration<Integer> e = this.listado.keys(); 
 		while(e.hasMoreElements()){
 			Asignatura a = this.listado.get(e.nextElement());
-			if(a.getCurso() == curso) //Curso
-				if(a.getGrupo() == grupo) //Grupo
+			if(a.getCurso() == curso || a.getCurso() == 0) //Curso 
+				if(a.getGrupo() == grupo || a.getCurso() == 0) //Grupo -> En caso de ser general, solo suele haber grupo A
 					if(a.getItinerario() != noIt) //!=Itinerario
 						if(a.getNombre().equalsIgnoreCase(nombre)) //Nombre
 							entradas.add(a);
