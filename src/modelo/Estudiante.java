@@ -262,6 +262,10 @@ public class Estudiante {
 		this.conflictos.clear();
 	}
 
+	/**
+	 * Dada una ruta, deposita un fichero .csv con el horario
+	 * @param file - Ruta destino
+	 */
 	public void exportHorario(File file) {
 		PrintStream  ps = null;
 		try{
@@ -288,6 +292,10 @@ public class Estudiante {
 		}
 	}
 	
+	/**
+	 * Vuelca todo el horario en un solo String para ser utilizado en la Web
+	 * @return String con el horario
+	 */
 	public String exportHorarioWeb() {
 		String horario = "";
 		
@@ -303,6 +311,12 @@ public class Estudiante {
 		return horario;
 	}
 	
+	/**
+	 * Convierte la tabla del horario de un cuatrimestre en una lista de String.
+	 * Cada entrada de la lista es una fila de la tabla.
+	 * @param cuatrimestre - Cuatrimestre seleccionado
+	 * @return Listado con las filas de la tabla convertidas en String
+	 */
 	private ArrayList<String> preparaLineasExcel(int cuatrimestre){
 		ArrayList<String> lineas = new ArrayList<>();
 		String q1[][] = getArrayAsignaturas(cuatrimestre);
