@@ -35,9 +35,9 @@ public class Conector {
             try{
                 this.ds = new  ComboPooledDataSource();
                 this.ds.setDriverClass("org.gjt.mm.mysql.Driver");
-                this.ds.setJdbcUrl("jdbc:mysql://localhost/aplicacion");
-                this.ds.setUser("aplicacion");
-                this.ds.setPassword("SHVBzh2Q93CUGJhU");
+                this.ds.setJdbcUrl("jdbc:mysql://85.10.205.173:3306/fdi_ucm_hor_1516");
+                this.ds.setUser("consultorbd");
+                this.ds.setPassword("Santesmases");
                      
                 this.con = ds.getConnection();
             }
