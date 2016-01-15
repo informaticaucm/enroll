@@ -288,6 +288,21 @@ public class Estudiante {
 		}
 	}
 	
+	public String exportHorarioWeb() {
+		String horario = "";
+		
+		for(String s : preparaLineasExcel(1))
+			horario += s + "\n";
+			
+		horario += ";;;;;\n";
+		horario += ";;;;;\n";
+			
+		for(String s : preparaLineasExcel(2))
+			horario += s + "\n";
+		
+		return horario;
+	}
+	
 	private ArrayList<String> preparaLineasExcel(int cuatrimestre){
 		ArrayList<String> lineas = new ArrayList<>();
 		String q1[][] = getArrayAsignaturas(cuatrimestre);
