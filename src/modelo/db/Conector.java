@@ -3,6 +3,8 @@ package modelo.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import com.mchange.v2.c3p0.*;
 
 /**
@@ -43,6 +45,7 @@ public class Conector {
             }
             catch(Exception e){
             	closeConnection();
+            	JOptionPane.showMessageDialog(null, "No se pudo conectar con la base de datos", "Error al conectar", JOptionPane.ERROR_MESSAGE, null);
                 //e.printStackTrace();
             }
         }
