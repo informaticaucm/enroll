@@ -1,0 +1,53 @@
+
+body {
+	background-color: #E0E0E0;
+}
+
+ul {
+	margin-top: 10px;
+	padding-left: 0px;
+	list-style-type:none;
+}
+
+li:hover {
+	background-color: #C0C0C0;
+}
+
+li.active {
+	background-color: #97b8cc;
+}
+
+div .seccion{
+	border: 2px solid #263F4E;
+	border-radius: 10px;
+}
+
+#contenedor .seccion{
+	background-color: #FFF;
+	min-height: 300px;
+}
+
+table {
+    background-color: #FFF;
+}
+
+table > thead > tr {
+	font-size: 14px;	
+}
+
+table > thead > tr > th {
+	line-height: 15px !important;
+}
+
+table > tbody > tr {
+	font-size: 12px;	
+}
+
+table > tbody > tr > td {
+	line-height: 10px !important;
+}
+
+table > tbody > tr > td.conflicto {
+	background-color: #ff0000;
+	color: #FFFFFF;
+}
