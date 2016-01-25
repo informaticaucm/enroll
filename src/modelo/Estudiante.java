@@ -339,7 +339,7 @@ public class Estudiante {
 		else
 			lineas.add(";;Segundo;Cuatrimestre;;");
 		lineas.add("Hora;Lunes;Martes;Miércoles;Jueves;Viernes");
-		for(int i = 1; i < 12; i++){
+		for(int i = 0; i < 12; i++){
 			String linea = q1[i][0] + ";" + q1[i][1] + ";" + q1[i][2] + ";" + q1[i][3] + ";" + q1[i][4] + ";" + q1[i][5];
 			lineas.add(linea);
 		}
