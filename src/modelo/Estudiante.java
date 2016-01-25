@@ -202,16 +202,31 @@ public class Estudiante {
 	 */
 	public boolean quitaAsignatura(String nombre){
 		boolean eliminado = false;
-		
+		Asignatura a = null;
+		int clave = 0;
+
 		Enumeration<Integer> e = this.eleccion.keys();
 		while (e.hasMoreElements()) {
-			int clave = e.nextElement();
-			if(this.eleccion.get(clave).getNombre().equalsIgnoreCase(nombre)){
+			clave = e.nextElement();
+			a = this.eleccion.get(clave);
+			if(a.getNombre().equalsIgnoreCase(nombre)){
 				this.eleccion.remove(clave);
+				liberaHora(a);
 				eliminado = true;
 			}
 		}
 		return eliminado;
+	}
+	
+	private void liberaHora(Asignatura a){
+		String hora = a.getCuatrimestre()+"-"+a.getDia()+"-"+a.getHora();
+		boolean borrado = false;
+		for(int i = 0; i < this.horasOcupadas.size() && !borrado ; i++){
+			if(this.horasOcupadas.get(i).equalsIgnoreCase(hora)){
+				this.horasOcupadas.remove(i);
+				borrado = true;
+			}
+		} 
 	}
 	
 	/**
@@ -269,18 +284,17 @@ public class Estudiante {
 	public void exportHorario(File file) {
 		PrintStream  ps = null;
 		try{
-			if(file.getAbsolutePath().charAt(file.getAbsolutePath().length()-1) == '/' || file.getAbsolutePath().charAt(file.getAbsolutePath().length()-1) == '\\')
-				ps = new PrintStream(file + "horario.csv");
-			else
-				ps = new PrintStream(file + "\\horario.csv");
+
+			ps = new PrintStream(file);
+			
 			for(String s : preparaLineasExcel(1))
-				ps.println(s);
+				ps.println(new String(s.getBytes(), "UTF-8"));
 			
 			ps.println(";;;;;");
 			ps.println(";;;;;");
 			
 			for(String s : preparaLineasExcel(2))
-				ps.println(s);
+				ps.println(new String(s.getBytes(), "UTF-8"));
 		}
 		catch(Exception e)
 		{
