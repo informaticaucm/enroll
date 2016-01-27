@@ -1,4 +1,4 @@
-# enroll
+# Enroll
 Una aplicación que te ayuda a decidir en qué asignaturas te matriculas.
 
 El funcionamiento es muy simple. Se muestran los horarios de los dos cuatrimestres vacíos y tres listados: cursos, grupos y asignaturas. Seleccionas un elemento de cada uno de los listados, pulsas el botón "Añadir" y, automáticamente, los horarios se actualizan.
