@@ -11,6 +11,10 @@ public class Consultor {
 	
 	public Consultor() {	}
 
+	/**
+	 * Establece la conexión a la base de datos realizada por Conector
+	 * @param con - Conexión a la base de datos
+	 */
 	public void setConnection(Connection con){
 		this.con = con;
 	}
@@ -90,6 +94,7 @@ public class Consultor {
 	 * Devuelve las asignaturas de un curso y grupo especificados
 	 * @param curso - Curso seleccionado
 	 * @param grupo - grupo seleccionado
+	 * @param itinerario - Itinerario seleccionado
 	 * @return Listado de asignaturas de ese curso y grupo
 	 */
 	public Oferta getAsignaturasCursoGrupo(int curso, char grupo, char itinerario){

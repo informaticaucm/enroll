@@ -100,14 +100,6 @@ public class Controller {
 	}
 	
 	/**
-	 * Devuelve el total de materias escogidas por el estudainte
-	 * @return
-	 */
-	public int totalEscogidasEstudiante(){
-		return this.estudiante.cuantasEscogidas();
-	}
-	
-	/**
 	 * Devuelve los conflictos que haya en el horario del estudiante
 	 * @return Listado de conflictos
 	 */

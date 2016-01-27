@@ -15,6 +15,9 @@ public class CellBackgroundRenderer implements TableCellRenderer
     this.delegate = defaultRenderer;
   }
 
+  /**
+   * Comprueba si en la celda hay un conflicto y configura los colores según el caso
+   */
   public Component getTableCellRendererComponent(JTable table, Object value, 
                            boolean isSelected, boolean hasFocus, int row, int column) 
   {

@@ -20,6 +20,11 @@ public class Oferta {
 		this.nombresOfertadas = new ArrayList<>();
 	}
 	
+	/**
+	 * A�ade el nombre de una asignatura al listado de ofertadas
+	 * @param nombre - Nombre de la asignatura
+	 * @return true si se pudo insertar
+	 */
 	public boolean addNombreOfertada(String nombre){
 		if(estaInsertada(nombre))
 			return false;
@@ -27,13 +32,17 @@ public class Oferta {
 		return true;
 	}
 	
+	/**
+	 * Devuelve el listado de ofertadas
+	 * @return Listado de Asignaturas ofertadas
+	 */
 	public ArrayList<String> getListadoOfertadas(){
 		return this.nombresOfertadas;
 	}
 	
 	/**
-	 * Comprueba si una asignatura ya ha sido insertada en nombresOfertadas.<br/>
-	 * @param a - Asignatura a comprobar
+	 * Comprueba si una asignatura ya ha sido insertada en nombresOfertadas.
+	 * @param nombre - Asignatura a comprobar
 	 * @return true si ya ha sido elegida.
 	 */
 	public boolean estaInsertada(String nombre){
@@ -46,7 +55,7 @@ public class Oferta {
 	}
 	
 	/**
-	 * Intenta añadir una asignatura al horario.<br/>
+	 * Intenta a�adir una asignatura al horario.
 	 * @param a - Asginatura a añadir
 	 * @return true si ha tenido éxito y false si ya había sido escogida.
 	 */
@@ -61,8 +70,15 @@ public class Oferta {
 		return exito;
 	}
 	
+	/**
+	 * Obtiene el listado de asignaturas de un curso, grupo e itinerario seleccionados
+	 * @param curso - Curso seleccionado
+	 * @param grupo - Grupo seleccionado
+	 * @param itinerario - Itinerario seleccionado
+	 * @return Listado de asignaturas de ese curso, grupo e itinerario
+	 */
 	public ArrayList<Asignatura> getAsignaturasCursoGrupoIt(int curso, char grupo, char itinerario){
-ArrayList<Asignatura> entradas = new ArrayList<>();
+		ArrayList<Asignatura> entradas = new ArrayList<>();
 		
 		char noIt = ' '; //Itinerario opuesto al escogido
 		if(itinerario == 'I')
@@ -111,7 +127,7 @@ ArrayList<Asignatura> entradas = new ArrayList<>();
 	}
 	
 	/**
-	 * Intenta añadir un listado de asignaturas al horario.<br/>
+	 * Intenta a�adir un listado de asignaturas al horario.
 	 * @param listado - Asginaturas a añadir
 	 * @return Número de inserciones con éxito
 	 */

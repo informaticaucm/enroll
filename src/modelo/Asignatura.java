@@ -5,12 +5,22 @@ public class Asignatura {
 	private int id;
 	private int curso; 			//primary
 	private char grupo; 		//primary
-	private char dia; 		//primary
+	private char dia; 			//primary
 	private int hora; 			//primary
 	private int cuatrimestre; 	//primary
 	private String nombre;
 	private char itinerario;
 	
+	/**
+	 * Constructor sin itinerario
+	 * @param id - ID de la asignatura
+	 * @param curso - Curos de la asignatura
+	 * @param grupo - Grupo de la asignatura
+	 * @param dia - Dia en el que se imparte
+	 * @param hora - Hora a la que se imparte
+	 * @param cuatrimestre - Cuatrimestre en el que se imparte
+	 * @param nombre - Nombre de la asignatura
+	 */
 	public Asignatura(int id, int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre) {
 		this.id = id;
 		this.curso = curso;
@@ -22,6 +32,17 @@ public class Asignatura {
 		this.itinerario = ' ';
 	}
 
+	/**
+	 * Constructor con itinerario
+	 * @param id - ID de la asignatura
+	 * @param curso - Curos de la asignatura
+	 * @param grupo - Grupo de la asignatura
+	 * @param dia - Dia en el que se imparte
+	 * @param hora - Hora a la que se imparte
+	 * @param cuatrimestre - Cuatrimestre en el que se imparte
+	 * @param nombre - Nombre de la asignatura
+	 * @param itinerario - Itinerario al que pertenece
+	 */
 	public Asignatura(int id, int curso, char grupo, char dia, int hora, int cuatrimestre, String nombre, char itinerario) {
 		this.id = id;
 		this.curso = curso;

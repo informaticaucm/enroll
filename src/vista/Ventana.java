@@ -80,9 +80,6 @@ public class Ventana extends JFrame {
 	private ArrayList<String> listaSeleccionadas;
 	private JList<String> tuSeleccion;
 	
-	/**
-	 * Create the frame.
-	 */
 	public Ventana() {
 		this.curso = "1";
 		this.grupo = "A";
@@ -455,10 +452,17 @@ public class Ventana extends JFrame {
 	        } catch (Exception e) {}
 	}
 
+	/**
+	 * Establece el controlador de la ventana
+	 * @param c - Controlador
+	 */
 	public void setController(Controller c){
 		this.c = c;	
 	}
 	
+	/**
+	 * Prepara la información inicial y muestra la ventana
+	 */
 	public void run(){
 		//Se establece un itinerario por defecto
 		this.itinerario = "Informacion";

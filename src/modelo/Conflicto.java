@@ -23,6 +23,10 @@ public class Conflicto {
 		return asignaturas;
 	}
 
+	/**
+	 * Devuelve una cadena con la hora del conficto en formato "Cuatrimestre-Dia-Hora"
+	 * @return Hora del conflito
+	 */
 	public String getHora() {
 		return hora;
 	}
@@ -41,14 +45,10 @@ public class Conflicto {
 	}
 	
 	/**
-	 * Intenta insertar una asignatura al conflito
+	 * Inserta una asignatura al conflito
 	 * @param a - Nueva asignatura en conflicto
-	 * @return true si se pudo añadir. false si ya existía
 	 */
-	public boolean addConflicto(Asignatura a){
-		
+	public void addConflicto(Asignatura a){
 		this.asignaturas.add(a);
-		
-		return true;
 	}
 }

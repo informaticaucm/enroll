@@ -34,7 +34,7 @@ public class Estudiante {
 	}
 	
 	/**
-	 * Intenta añadir una asignatura a la elección del estudiante.<br/>
+	 * Intenta añadir una asignatura a la elección del estudiante.
 	 * @param a - Asginatura a añadir
 	 * @return true si ha tenido éxito y false si ya había sido escogida.
 	 */
@@ -98,7 +98,7 @@ public class Estudiante {
 	}
 	
 	/**
-	 * Comprueba si una asignatura ya ha sido elegida por el usuario.<br/>
+	 * Comprueba si una asignatura ya ha sido elegida por el usuario.
 	 * @param a - Asignatura a comprobar
 	 * @return true si ya ha sido elegida.
 	 */
@@ -112,7 +112,7 @@ public class Estudiante {
 	}
 	
 	/**
-	 * Devuelve un ArrayList<Asignatura> con todas las asignaturas elegidas hasta el momento
+	 * Devuelve una lista con todas las asignaturas elegidas hasta el momento.
 	 * @return Asignaturas elegidas
 	 */
 	public ArrayList<Asignatura> getEleccion(){
@@ -136,7 +136,7 @@ public class Estudiante {
 	}
 	
 	/**
-	 * Comprueba si hay conflictos y, si los hay, devuelve un arrayList.<br/>
+	 * Comprueba si hay conflictos y, si los hay, devuelve un arrayList.
 	 * Si no hay conflictos, devuelve null
 	 * @return Un ArrayList con todos los conflictos en el horario del alumno
 	 */
