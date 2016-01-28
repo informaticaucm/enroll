@@ -682,6 +682,9 @@ public class Ventana extends JFrame {
 				updateTablas();	//Vuelve a mostrar los datos
 				this.listaSeleccionadas.remove(this.tuSeleccion.getSelectedIndex());
 				updatetuSeleccion();
+				
+				if(this.c.getConflictos().size() == 0)
+					this.avisado = false;
 			}
 		}
 	}
@@ -691,6 +694,7 @@ public class Ventana extends JFrame {
 		this.listaSeleccionadas.clear();
 		updateTablas();
 		updatetuSeleccion();
+		this.avisado = false;
 	}
 	
 	private void updateTablas(){
