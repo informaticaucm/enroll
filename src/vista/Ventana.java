@@ -679,12 +679,22 @@ public class Ventana extends JFrame {
 			else
 			{
 				//Elimina Asignatura
-				updateTablas();	//Vuelve a mostrar los datos
 				this.listaSeleccionadas.remove(this.tuSeleccion.getSelectedIndex());
 				updatetuSeleccion();
-				
+				updateTablas();
 				if(this.c.getConflictos().size() == 0)
 					this.avisado = false;
+				
+				//Muestra de conflictos
+				ArrayList<Conflicto> conflictos = this.c.getConflictos();
+				if(conflictos.size() > 0){
+					muestraConflictos(conflictos);
+					if(!this.avisado){
+						JOptionPane.showMessageDialog(this, "¡Cuidado! ¡Tienes materias solapadas!",
+								"Materias solapadas", JOptionPane.WARNING_MESSAGE, null);
+						this.avisado = true;
+					}
+				}
 			}
 		}
 	}
