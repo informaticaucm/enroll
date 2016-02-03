@@ -51,4 +51,22 @@ public class Conflicto {
 	public void addConflicto(Asignatura a){
 		this.asignaturas.add(a);
 	}
+	
+	/**
+	 * Elimina una asignatura del conflicto
+	 * @param a
+	 */
+	public void removeConflicto(String asginatura){
+		boolean encontrado = false;
+		int size = 0;
+		
+		while(size < this.asignaturas.size() && !encontrado){
+			if(this.asignaturas.get(size).getNombre().equalsIgnoreCase(asginatura))
+				encontrado = true;
+			
+			if(!encontrado)
+				size++;
+		}
+		this.asignaturas.remove(size);
+	}
 }

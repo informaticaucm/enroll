@@ -24,6 +24,8 @@ public class CellBackgroundRenderer implements TableCellRenderer
     Component c = delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     
     if (((String)value).contains("-")){
+    	System.out.println("Pinto la casilla x[" + row + "] y[" + column + "]");
+    	
     	c.setBackground(Color.RED);
     	c.setForeground(Color.WHITE);
     }

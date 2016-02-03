@@ -204,7 +204,7 @@ public class Estudiante {
 		boolean eliminado = false;
 		Asignatura a = null;
 		int clave = 0;
-
+		String id = "";
 		Enumeration<Integer> e = this.eleccion.keys();
 		while (e.hasMoreElements()) {
 			clave = e.nextElement();
@@ -213,6 +213,10 @@ public class Estudiante {
 				this.eleccion.remove(clave);
 				liberaHora(a);
 				eliminado = true;
+				id = a.getCuatrimestre()+"-"+a.getDia()+"-"+a.getHora();
+				if(this.conflictos.containsKey(id)){
+					this.conflictos.get(id).removeConflicto(nombre);
+				}
 			}
 		}
 		return eliminado;
@@ -221,10 +225,17 @@ public class Estudiante {
 	private void liberaHora(Asignatura a){
 		String hora = a.getCuatrimestre()+"-"+a.getDia()+"-"+a.getHora();
 		boolean borrado = false;
+		Conflicto c = null;
 		for(int i = 0; i < this.horasOcupadas.size() && !borrado ; i++){
 			if(this.horasOcupadas.get(i).equalsIgnoreCase(hora)){
 				this.horasOcupadas.remove(i);
 				borrado = true;
+				c = this.conflictos.get(""+a.getCuatrimestre()+a.getDia()+a.getHora());
+				//1-X-19
+				if(c != null){
+					
+				}
+					
 			}
 		} 
 	}
@@ -250,18 +261,18 @@ public class Estudiante {
 		}		
 		
 		switch (hora) {
-			case 9:  coord[0] = 1; break;
-			case 10: coord[0] = 2; break;
-			case 11: coord[0] = 3; break;
-			case 12: coord[0] = 4; break;
-			case 13: coord[0] = 5; break;
-			case 14: coord[0] = 6; break;
-			case 15: coord[0] = 7; break;
-			case 16: coord[0] = 8; break;
-			case 17: coord[0] = 9; break;
-			case 18: coord[0] = 10; break;
-			case 19: coord[0] = 11; break;
-			case 20: coord[0] = 12; break;
+			case 9:  coord[0] = 0; break;
+			case 10: coord[0] = 1; break;
+			case 11: coord[0] = 2; break;
+			case 12: coord[0] = 3; break;
+			case 13: coord[0] = 4; break;
+			case 14: coord[0] = 5; break;
+			case 15: coord[0] = 6; break;
+			case 16: coord[0] = 7; break;
+			case 17: coord[0] = 8; break;
+			case 18: coord[0] = 9; break;
+			case 19: coord[0] = 10; break;
+			case 20: coord[0] = 11; break;
 			default : break;
 		}
 		

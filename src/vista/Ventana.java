@@ -682,9 +682,7 @@ public class Ventana extends JFrame {
 				this.listaSeleccionadas.remove(this.tuSeleccion.getSelectedIndex());
 				updatetuSeleccion();
 				updateTablas();
-				if(this.c.getConflictos().size() == 0)
-					this.avisado = false;
-				
+
 				//Muestra de conflictos
 				ArrayList<Conflicto> conflictos = this.c.getConflictos();
 				if(conflictos.size() > 0){
@@ -695,6 +693,8 @@ public class Ventana extends JFrame {
 						this.avisado = true;
 					}
 				}
+				else
+					this.avisado = false;
 			}
 		}
 	}
