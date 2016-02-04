@@ -86,4 +86,11 @@ public class Asignatura {
 		return itinerario;
 	}
 	
+	/**
+	 * Genera una cadena del tipo "cuatrimestre-dia-hora" con los datos de la asignatura
+	 * @return
+	 */
+	public String crearClave(){
+		return this.cuatrimestre + "-" + this.dia + "-" + this.hora;
+	}
 }
