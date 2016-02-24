@@ -363,6 +363,7 @@ public class Ventana extends JFrame {
 		btnAadir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				anyadeAsignatura();
+				pintarConflictos();
 			}
 		});
 		
@@ -419,11 +420,13 @@ public class Ventana extends JFrame {
 		btnEliminarTodas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminaTodas();
+				pintarConflictos();
 			}
 		});
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminaAsignatura();
+				pintarConflictos();
 			}
 		});
 		
@@ -641,7 +644,7 @@ public class Ventana extends JFrame {
 		this.segundoQ.setModel(dtm2);
 	}
 	
-	public void pintarConflictos(){
+	private void pintarConflictos(){
 		this.primerQ.setBackground(Color.WHITE);
 		this.segundoQ.setBackground(Color.WHITE);
 		
@@ -662,6 +665,7 @@ public class Ventana extends JFrame {
 			tc = tcm.getColumn(j);
 			tc.setCellRenderer(nuevoRenderer2);
 		}
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
 	private boolean comprobacion(){

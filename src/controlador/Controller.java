@@ -93,8 +93,6 @@ public class Controller {
 			ok = ok && addAsignaturaEstudiante(a);
 		}
 		
-		v.pintarConflictos();
-		
 		return ok;
 	}
 	
@@ -133,7 +131,6 @@ public class Controller {
 	public boolean quitaAsignaturaEstudiante(String nombre){
 		boolean aux = this.estudiante.quitaAsignatura(nombre);
 		this.hayConflictos = this.estudiante.hayConflictos();
-		v.pintarConflictos();
 		return aux;
 	}
 	
@@ -143,7 +140,6 @@ public class Controller {
 	public void vaciaEscogidasEstudiante(){
 		this.hayConflictos = false;
 		this.estudiante.vaciaElecciones();
-		v.pintarConflictos();
 	}
 	
 	/**
