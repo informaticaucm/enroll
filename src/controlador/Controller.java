@@ -5,71 +5,97 @@ import java.util.ArrayList;
 
 import modelo.Asignatura;
 import modelo.Consultor;
-import modelo.Conflicto;
 import modelo.Estudiante;
 import modelo.Oferta;
-import modelo.db.Conector;
+
 import vista.Ventana;
 
 public class Controller {
 
+	private Consultor consultor;
+	private Estudiante estudiante;
+	private Oferta oferta;
+	private Ventana v;
 	
-	private Estudiante estudiante;	//Materias escogidas por el estudiante, horas ocupadas y conflictos
-	private Oferta oferta;			//Materias que oferta la facultad
-	private Conector conector;		//Clase encargada de la conexión a la base de datos
-	private Consultor consultor;	//Clase encargada de las consultas a la base de datos
+	private boolean hayConflictos;
 	
 	public Controller() {
+		this.consultor = new Consultor();
 		this.estudiante = new Estudiante();
 		this.oferta = new Oferta();
-		this.conector = new Conector();
-		this.consultor = new Consultor();
+		this.hayConflictos = false;
 	}
 	
 	/**
 	 * Metodo encargado de iniciar la aplicación
 	 */
 	public void run(){
-		Ventana v = new Ventana();
+		v = new Ventana();
 		v.setController(this);
 		v.setLocationRelativeTo(null);
 		
 		//Conecta a la BBDD
-		this.conector.openConnection();
-		this.consultor.setConnection(this.conector.getConexion());
+		conectar();
 		
 		//Prepara la información inicial de la ventana y la muestra
 		v.run();
-		
 	}
 	
 //////////////////////
 ////    Modelo    ////
 //////////////////////
 	
-	//->Conector
+	
+	//////////////////////////////////////
+	//    Operaciones con Consultor     //
+	//////////////////////////////////////
 	/**
 	 * Abre la conexión a la base de datos
 	 */
-	public void openConnection(){
-		this.conector.openConnection();
+	public void conectar(){
+		this.consultor.conectar();
 	}
 	
 	/**
 	 * Cierra la conexión con la base de datos
 	 */
-	public void closeConnection(){
-		this.conector.closeConnection();
+	public void desconectar(){
+		this.consultor.desconectar();
 	}
 	
-	//->Estudiante
+	//////////////////////////////////////
+	//    Operaciones con Estudiante    //
+	//////////////////////////////////////
 	/**
 	 * Intenta añadir una asignatura a la elección del estudiante
 	 * @param a - La asignatura en cuestión
 	 * @return true si se ha podido insertar
 	 */
 	public boolean addAsignaturaEstudiante(Asignatura a){
-		return this.estudiante.addAsignatura(a);
+		boolean exito = true;
+		
+		try{
+			this.estudiante.addAsignatura(a);
+			this.hayConflictos = this.estudiante.hayConflictos();
+		}
+		catch(Exception e){
+			exito = false;
+		}
+		
+		
+		return exito;
+	}
+	
+	public boolean addAsignaturasEstudiante(ArrayList<Asignatura> listado){
+		boolean ok = true;
+		
+		for(Asignatura a: listado){
+			ok = ok && addAsignaturaEstudiante(a);
+		}
+		
+		v.pintarConflictos();
+		
+		return ok;
 	}
 	
 	/**
@@ -77,8 +103,8 @@ public class Controller {
 	 * @param a - La asignatura en cuestión
 	 * @return true si ya ha sido elegida
 	 */
-	public boolean estaElegidaEstudiante(Asignatura a){
-		return this.estudiante.estaElegida(a);
+	public boolean estaElegidaEstudiante(String nombre){
+		return this.estudiante.estaElegida(nombre);
 	}
 	
 	/**
@@ -100,31 +126,41 @@ public class Controller {
 	}
 	
 	/**
-	 * Devuelve los conflictos que haya en el horario del estudiante
-	 * @return Listado de conflictos
-	 */
-	public ArrayList<Conflicto> getConflictos(){
-		return this.estudiante.getConflictos();
-	}
-	
-	/**
 	 * Elimina la asignatura de la elección del usuario
 	 * @param nombre - Nombre de la asignatura
 	 * @return - true si se pudo eliminar la asignatura
 	 */
 	public boolean quitaAsignaturaEstudiante(String nombre){
-		return this.estudiante.quitaAsignatura(nombre);
+		boolean aux = this.estudiante.quitaAsignatura(nombre);
+		this.hayConflictos = this.estudiante.hayConflictos();
+		v.pintarConflictos();
+		return aux;
 	}
 	
 	/**
 	 * Elimina las asignaturas escogidas, los conflictos y el horario
 	 */
 	public void vaciaEscogidasEstudiante(){
+		this.hayConflictos = false;
 		this.estudiante.vaciaElecciones();
+		v.pintarConflictos();
 	}
 	
-	//Oferta
+	/**
+	 * 
+	 * @return true si hay conflictos. false en caso contrario
+	 */
+	public boolean hayConflictos(){
+		return this.hayConflictos;
+	}
 	
+	public boolean addAsignaturaFromVentana(String nombre){
+		return addAsignaturasEstudiante(this.oferta.getAsignatura(nombre));
+	}
+	
+	//////////////////////////////////////
+	//	  Operaciones con Oferta        //
+	//////////////////////////////////////
 	/**
 	 * Intenta añadir una asignatura a la oferta
 	 * @param a - Asginatura en cuestion
@@ -144,15 +180,12 @@ public class Controller {
 	}
 	
 	/**
-	 * Devuelve un listado con todas las entradas de horario de la materia del curso, grupo e itinerario indicados 
-	 * @param curso - Curso indicado
-	 * @param grupo - Grupo indicado
-	 * @param itinerario - Itinerario indicado
-	 * @param nombre - Nombre de la oferta
+	 * Devuelve un listado con todas las entradas de horario de la materia
+	 * @param nombre - Nombre de la materia
 	 * @return ArrayList con las entradas de horario
 	 */
-	public ArrayList<Asignatura> getAsignaturasOferta(int curso, char grupo, char itinerario, String nombre){
-		return this.oferta.getAsignatura(curso, grupo, itinerario, nombre);
+	public ArrayList<Asignatura> getAsignaturasOferta(String nombre){
+		return this.oferta.getAsignatura(nombre);
 	}
 	
 	/**
@@ -161,7 +194,7 @@ public class Controller {
 	 * @return true si se pudo eliminar la asignatura en cuestion
 	 */
 	public boolean quitaAsignaturaOferta(Asignatura a){
-		return this.oferta.quitaAsignatura(a);
+		return this.oferta.quitaAsignatura(a.getNombre());
 	}
 	
 	/**
@@ -180,7 +213,13 @@ public class Controller {
 		this.oferta.clear();
 	}
 	
-	//Consultor
+	public ArrayList<String> getListadoOfertadas(){
+		return this.oferta.getListadoOfertadas();
+	}
+	
+	//////////////////////////////////////
+	//    Operaciones con Consultor     //
+	//////////////////////////////////////
 	/**
 	 * Devuelve las asignaturas de un curso y un grupo indicados
 	 * @param curso - Curso seleccionado
@@ -188,9 +227,9 @@ public class Controller {
 	 * @param itinerario - Itinerario seleccionado
 	 * @return Oferta con listado de asignaturas
 	 */
-	public Oferta consultaAsignaturasCursoGrupo(int curso, char grupo, char itinerario){
-		this.oferta = this.consultor.getAsignaturasCursoGrupo(curso, grupo, itinerario); 
-		return this.oferta;
+	public void consultaAsignaturasCursoGrupo(int curso, char grupo, char itinerario){
+		vaciaOferta();
+		addAsignaturasOferta(this.consultor.getAsignaturasCursoGrupo(curso, grupo, itinerario)); 
 	}
 	
 	/**
@@ -199,8 +238,8 @@ public class Controller {
 	 * @param grupo - Grupo seleccionado
 	 * @return Listado de nombres de las asignaturas
 	 */
-	public ArrayList<String> consultaListadoAsignaturasCursoGrupo(int curso, char grupo){
-		return this.consultor.getListadoAsignaturasCursoGrupo(curso, grupo);
+	public ArrayList<String> consultaListadoAsignaturasCursoGrupo(){
+		return this.oferta.getListadoOfertadas();
 	}
 	
 	/**
@@ -236,16 +275,6 @@ public class Controller {
 	 */
 	public ArrayList<Asignatura> consultaOptativasGenerales(){
 		return this.consultor.getOptativasGenerales();
-	}
-	
-	/**
-	 * Devuelve los grupos para el curso y el itinerario seleccionado
-	 * @param curso - Curso seleccionado
-	 * @param itinerario - Itinerario seleccionado
-	 * @return Grupos existentes relacionados
-	 */
-	public ArrayList<String> consultaGruposCursoIt(int curso, char itinerario){
-		return this.consultor.getGruposCursoIt(curso, itinerario);
 	}
 	
 	/**

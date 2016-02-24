@@ -7,9 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controlador.Controller;
-import modelo.Asignatura;
-import modelo.Conflicto;
-import modelo.Oferta;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -19,6 +16,8 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.border.TitledBorder;
 import java.awt.FlowLayout;
 import javax.swing.JRadioButton;
@@ -38,7 +37,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -52,37 +50,39 @@ import java.awt.event.ItemEvent;
 
 public class Ventana extends JFrame {
 
+	//Constantes
 	private static final long serialVersionUID = 4564152682927067006L;
-	
 	private static final String[] columnas = {"Hora", "lunes", "martes", "miercoles", "jueves", "viernes"};
-
 	private static final int LEVELITINERARIO = 1;
 	private static final int LEVELCURSOS = 2;
 	private static final int LEVELGRUPOS = 3;
 	
+	//Variables de ventana
 	private JPanel contentPane;
 	private Controller c;
 	private JTable primerQ;
 	private JTable segundoQ;
+	private JList<String> tuSeleccion;
+	private JList<String> listaAsignaturas;
+	private JComboBox<String> cboxGrupo;
+	private JComboBox<String> cboxCursos;
+	private JRadioButton rdbtnInformacion;
+	private JRadioButton rdbtnComputacion;
 	private final ButtonGroup btnsItinerario = new ButtonGroup();
 	
+	//Variables de funcionamiento
 	private String itinerario;
 	private String curso;
 	private String grupo;
 	private String asignatura;
-	private JList<String> listaAsignaturas;
-	
-	private Oferta oferta;
-	private JComboBox<String> cboxGrupo;
-	private JComboBox<String> cboxCursos;
-	
 	private boolean avisado;
 	private ArrayList<String> listaSeleccionadas;
-	private JList<String> tuSeleccion;
+	
+	
 	
 	public Ventana() {
-		this.curso = "1";
-		this.grupo = "A";
+		this.curso = "";
+		this.grupo = "";
 		this.itinerario = "I";
 		this.avisado = false;
 		this.listaSeleccionadas = new ArrayList<>();
@@ -254,26 +254,25 @@ public class Ventana extends JFrame {
 		itinerariosPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Itinerario", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		itinerariosPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
-		JRadioButton rdbtnCienciasDeLa = new JRadioButton("Informaci\u00F3n");
-		rdbtnCienciasDeLa.setSelected(true);
-		rdbtnCienciasDeLa.addMouseListener(new MouseAdapter() {
+		rdbtnInformacion = new JRadioButton("Informaci\u00F3n");
+		rdbtnInformacion.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				cambiaItinerario("Informacion");
 			}
 		});
-		btnsItinerario.add(rdbtnCienciasDeLa);
-		itinerariosPanel.add(rdbtnCienciasDeLa);
+		btnsItinerario.add(rdbtnInformacion);
+		itinerariosPanel.add(rdbtnInformacion);
 		
-		JRadioButton rdbtnTecnologaDeLa = new JRadioButton("Computaci\u00F3n");
-		rdbtnTecnologaDeLa.addMouseListener(new MouseAdapter() {
+		rdbtnComputacion = new JRadioButton("Computaci\u00F3n");
+		rdbtnComputacion.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				cambiaItinerario("Computacion");
 			}
 		});
-		btnsItinerario.add(rdbtnTecnologaDeLa);
-		itinerariosPanel.add(rdbtnTecnologaDeLa);
+		btnsItinerario.add(rdbtnComputacion);
+		itinerariosPanel.add(rdbtnComputacion);
 		
 		JPanel cursoGrupoPanel = new JPanel();
 		GridBagConstraints gbc_cursoGrupoPanel = new GridBagConstraints();
@@ -303,8 +302,7 @@ public class Ventana extends JFrame {
 		cboxCursos.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				if(arg0.getStateChange() == ItemEvent.SELECTED){
-					cursoElegido((String) cboxCursos.getSelectedItem());
-					seleccionaPrimeros(LEVELCURSOS);
+					cursoElegido();
 				}
 			}
 		});
@@ -323,8 +321,7 @@ public class Ventana extends JFrame {
 		cboxGrupo.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.SELECTED){
-					grupoElegido((String) cboxGrupo.getSelectedItem());
-					seleccionaPrimeros(LEVELGRUPOS);
+					grupoElegido();
 				}
 			}
 		});
@@ -347,7 +344,7 @@ public class Ventana extends JFrame {
 		listaAsignaturas.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting()){
-					asignaturaElegida(listaAsignaturas.getSelectedValue());
+					asignaturaElegida();
 				}
 			}
 		});
@@ -464,197 +461,146 @@ public class Ventana extends JFrame {
 	 * Prepara la información inicial y muestra la ventana
 	 */
 	public void run(){
-		//Se establece un itinerario por defecto
-		this.itinerario = "Informacion";
+		this.rdbtnInformacion.setSelected(true);
+		this.itinerario = "I";
 		
-		//Se actualizan las listas con los datos de 1º
-		setListaCursos();
-		setListaGrupos(this.c.consultaGruposCursoSeleccionado(1));
-		this.oferta = this.c.consultaAsignaturasCursoGrupo(1, 'A', 'I');
-		setListaAsignaturas();
+		cambiaItinerario(this.itinerario);
 		
-		//Se realiza una selección por defecto, tanto visualmente como internamente
-		this.listaAsignaturas.setSelectedIndex(0);
-		this.cboxGrupo.setSelectedIndex(0);
-		this.cboxCursos.setSelectedIndex(0);
-		this.asignatura = this.listaAsignaturas.getSelectedValue();
-		this.grupo = (String) this.cboxGrupo.getSelectedItem();
-		this.curso = (String) this.cboxCursos.getSelectedItem();
-		
-		//Se muestra la ventana
 		this.setVisible(true);
 	}
 	
-	private void cambiaItinerario(String it){
-		if(!this.itinerario.equalsIgnoreCase(it))
-		{
-			switch (it) {
-				case "Informacion":{
-					//System.out.println("Cambio a Informacion");
-					this.itinerario = it;
-					//Cambio de la lista de grupos
-					setListaGrupos(this.c.consultaGruposCursoSeleccionado(1));
-					
-					//Cambio de la lista de asignaturas
-					this.oferta = this.c.consultaAsignaturasCursoGrupo(1, 'A', 'I');
-					setListaAsignaturas();
-				}
-				break;
-				case "Computacion":{
-					//System.out.println("Cambio a Computacion");
-					this.itinerario = it;
-					//Cambio de la lista de grupos
-					setListaGrupos(this.c.consultaGruposCursoSeleccionado(1));
-					
-					//Cambio de la lista de asignaturas
-					this.oferta = this.c.consultaAsignaturasCursoGrupo(1, 'A', 'C');
-					setListaAsignaturas();
-				}
-				break;
-				default: break;
-			}
-			seleccionaPrimeros(LEVELITINERARIO);
-		}
+	private void cambiaItinerario(String itinerario){
+		this.itinerario = itinerario;
+		
+		actualizaListados(LEVELITINERARIO);
 	}
-
-	private void seleccionaPrimeros(int level){
-		if(level <= LEVELGRUPOS){
-			this.listaAsignaturas.setSelectedIndex(0);
-			this.asignatura = this.listaAsignaturas.getSelectedValue();
+	
+	private void cursoElegido(){
+		this.curso = (String) cboxCursos.getSelectedItem();
+		actualizaListados(LEVELCURSOS);
+	}
+	
+	private void grupoElegido(){
+		this.grupo = (String) this.cboxGrupo.getSelectedItem();
+		actualizaListados(LEVELGRUPOS);
+	}
+	
+	private void asignaturaElegida(){
+		this.asignatura = this.listaAsignaturas.getSelectedValue();
+	}
+	
+	private void actualizaListados(int level){
+		if(level <= LEVELITINERARIO){
+			actualizaCursos();
+			
+			if(this.cboxCursos.getItemCount() > 0){
+				this.cboxCursos.setSelectedIndex(0);
+				this.curso = (String) this.cboxCursos.getSelectedItem();
+			}
 		}
 		
 		if(level <= LEVELCURSOS){
-			this.cboxGrupo.setSelectedIndex(0);
-			this.grupo = (String) this.cboxGrupo.getSelectedItem();
+			actualizaGrupos();
 			
+			if(this.cboxGrupo.getItemCount() > 0){
+				this.cboxGrupo.setSelectedIndex(0);
+				this.grupo = (String) this.cboxGrupo.getSelectedItem();
+			}
 		}
 		
-		if(level <= LEVELITINERARIO){
-			this.cboxCursos.setSelectedIndex(0);
-			this.curso = (String) this.cboxCursos.getSelectedItem();
+		if(level <= LEVELGRUPOS){
+			actualizaAsignaturas();
+			
+			if(this.listaAsignaturas.getModel().getSize() > 0){
+				this.listaAsignaturas.setSelectedIndex(0);
+				this.asignatura = this.listaAsignaturas.getSelectedValue();
+			}
 		}
+		
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
-	private void setListaCursos(){
+	private void actualizaCursos(){
+		ArrayList<Integer> cursos = this.c.consultaCursos();
+		
 		DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<String>();
 		
-		for(Integer i : this.c.consultaCursos()){
+		for(Integer i : cursos){
 			cbm.addElement(""+i);
 		}
 		this.cboxCursos.setModel(cbm);
-		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
-	private void setListaGrupos(ArrayList<String> grupos){
-		DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<String>();
-		for(String i : grupos){
-			cbm.addElement(""+i);
+	private void actualizaGrupos(){
+		ArrayList<String> grupos = this.c.consultaGruposCursoSeleccionado(Integer.parseInt(this.curso));
+		
+		DefaultComboBoxModel<String> cmb = new DefaultComboBoxModel<String>();
+		
+		for(String g : grupos){
+			cmb.addElement(g);
 		}
-		this.cboxGrupo.setModel(cbm);
-		SwingUtilities.updateComponentTreeUI(this);
+		this.cboxGrupo.setModel(cmb);
+		
 	}
 	
-	private void setListaAsignaturas(){
-		DefaultListModel<String> lm = new DefaultListModel<>();
+	private void actualizaAsignaturas(){
+		System.out.println("");
+		this.c.consultaAsignaturasCursoGrupo(Integer.parseInt(this.curso), this.grupo.charAt(0), this.itinerario.charAt(0));
 		
-		int auxCurso = Integer.parseInt(this.curso);
-		char auxGrupo = this.grupo.charAt(0);
-		char auxItinerario = this.itinerario.charAt(0);
+		ArrayList<String> listado = this.c.getListadoOfertadas();
 		
-		this.oferta = this.c.consultaAsignaturasCursoGrupo(auxCurso, auxGrupo, auxItinerario);
+		DefaultListModel<String> dlm = new DefaultListModel<>();
 		
-		for(String a : this.oferta.getListadoOfertadas()){
-			lm.addElement(a);
+		for(String a : listado){
+			dlm.addElement(a);
 		}
-		this.listaAsignaturas.setModel(lm);
-		SwingUtilities.updateComponentTreeUI(this);
+		this.listaAsignaturas.setModel(dlm);
 	}
 	
-	//Si un curso es seleccionado, se modifican las listas de grupos y de asignaturas
-	private void cursoElegido(String curso){
-		this.curso = curso;
-		
-		int aux = Integer.parseInt(curso);
-		
-		//Cambio de la lista de grupos
-		setListaGrupos(this.c.consultaGruposCursoSeleccionado(aux));
-		
-		//Cambio de la lista de asignaturas
-		this.oferta = this.c.consultaAsignaturasCursoGrupo(aux, 'A', this.itinerario.charAt(0));
-		setListaAsignaturas();
-	}
-	
-	//Si un grupo es seleccionado, se modifica la lista de asignaturas
-	private void grupoElegido(String grupo){
-		if(grupo == null)
-			return;
-		
-		this.grupo = grupo;
-		
-		int auxCurso = Integer.parseInt(this.curso);
-		char auxGrupo = grupo.charAt(0);
-		
-		//Cambio de la lista de asignaturas
-		this.oferta = this.c.consultaAsignaturasCursoGrupo(auxCurso, auxGrupo, this.itinerario.charAt(0));
-		setListaAsignaturas();
-	}
-	
-	//Si una materia es seleccionada, no afecta a ninguna lista
-	private void asignaturaElegida(String asignatura){
-		this.asignatura = asignatura;
-	}
-	
-	private void anyadeAsignatura() {
-		// Añade las asignaturas a las elegidas por el estudiante
-		
-		//System.out.println("Se intenta añadir -> It: " + this.itinerario + ", Curso: " + this.curso + "º, Nombre: " + this.asignatura + ", Grupo: " + this.grupo);
-		
-		if(!checkSeleccion())
-			JOptionPane.showMessageDialog(this, "Primero selecciona un curso, un grupo y la materia correspondiente.", "Error al añadir asignatura", JOptionPane.ERROR_MESSAGE, null);
-		else
+	private void anyadeAsignatura(){
+		if(comprobacion())
 		{
-			ArrayList<Asignatura> elegida = this.c.getAsignaturasOferta(Integer.parseInt(this.curso), this.grupo.charAt(0), this.itinerario.charAt(0), this.asignatura);
-			
-			//Como todas las entradas del ArrayList tienen el mismo nombre, la 1ª entrada vale para comprobar si ya está
-			if(this.c.estaElegidaEstudiante(elegida.get(0)))
+			if(this.c.estaElegidaEstudiante(this.asignatura))
 			{
-				JOptionPane.showMessageDialog(this, "¿De verdad te quieres matricular dos veces en la misma asignatura?", "No se puede añadir asignatura", JOptionPane.QUESTION_MESSAGE, null);
+				JOptionPane.showMessageDialog(this, "¿De verdad quieres matricularte dos veces de la misma asignatura?", "¿En serio?", JOptionPane.QUESTION_MESSAGE, null);
 			}
 			else
 			{
-				//Añadir asignatura
-				for(Asignatura a : elegida)
-					this.c.addAsignaturaEstudiante(a);
+				this.c.addAsignaturaFromVentana(this.asignatura);
+				this.listaSeleccionadas.add( this.asignatura + " - " + this.curso + "º " + this.grupo);
+				updatetuSeleccion();
 				
-				updateTablas();
-				
-				listarSeleccionada(this.curso, this.grupo, this.asignatura);
-				
-				//Muestra de conflictos
-				ArrayList<Conflicto> conflictos = this.c.getConflictos();
-				if(conflictos.size() > 0){
-					muestraConflictos(conflictos);
-					if(!this.avisado){
-						JOptionPane.showMessageDialog(this, "¡Cuidado! ¡Tienes materias solapadas!",
-								"Materias solapadas", JOptionPane.WARNING_MESSAGE, null);
-						this.avisado = true;
-					}
+				if(this.c.hayConflictos() && !this.avisado){
+					JOptionPane.showMessageDialog(this, "¡Cuidado! ¡Tienes materias solapadas!", "Materias solapadas", JOptionPane.ERROR_MESSAGE, null);
+					this.avisado = true;
 				}
 			}
 		}
+		else
+		{
+			JOptionPane.showMessageDialog(this, "Primero selecciona un curso, un grupo y la materia correspondiente.", "Error al añadir asignatura", JOptionPane.ERROR_MESSAGE, null);
+		}
 	}
 	
-	//Añade una asignatura al listado de "seleccionadas"
-	private void listarSeleccionada(String curso, String grupo, String asignatura){
-		String s = asignatura + " ( " + curso + "º " + grupo + " )";
-		
-		this.listaSeleccionadas.add(s);
-		
-		updatetuSeleccion();
+	private void eliminaAsignatura(){
+		int index = this.tuSeleccion.getSelectedIndex(); 
+		if(index > -1){
+			String value = this.tuSeleccion.getSelectedValue();
+			String split[] = value.split("-");
+			String nombre = split[0].trim();
+			
+			this.listaSeleccionadas.remove(index);
+			this.c.quitaAsignaturaEstudiante(nombre);
+			if(!this.c.hayConflictos() && this.avisado)
+				this.avisado = false;
+			updatetuSeleccion();
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(this, "Primero selecciona una asignatura", "Error al eliminar asignatura", JOptionPane.ERROR_MESSAGE, null);	
+		}
 	}
 	
-	
-	//Toma el listado de asignaturas y lo muestra
 	private void updatetuSeleccion(){
 		DefaultListModel<String> dlm = new DefaultListModel<String>();
 		
@@ -663,48 +609,16 @@ public class Ventana extends JFrame {
 		}
 		
 		this.tuSeleccion.setModel(dlm);
+		updateTablas();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
-	//Elimina la asignatura de la lista de eligdas por el estudiante	
-	private void eliminaAsignatura(){
-		if(this.tuSeleccion.getSelectedIndex() < 0){
-			JOptionPane.showMessageDialog(this, "Primero selecciona una asignatura del listado de la derecha.", "Error al eliminar asignatura", JOptionPane.ERROR_MESSAGE, null);
-		}
-		else{
-			String split[] = this.listaSeleccionadas.get(this.tuSeleccion.getSelectedIndex()).split(" ");
-			
-			if(!this.c.quitaAsignaturaEstudiante(split[0]))
-				JOptionPane.showMessageDialog(this, "No se puede quitar " + this.asignatura + " del horario porque no está.", "Error al eliminar asignatura", JOptionPane.ERROR_MESSAGE, null);
-			else
-			{
-				//Elimina Asignatura
-				this.listaSeleccionadas.remove(this.tuSeleccion.getSelectedIndex());
-				updatetuSeleccion();
-				updateTablas();
-
-				//Muestra de conflictos
-				ArrayList<Conflicto> conflictos = this.c.getConflictos();
-				if(conflictos.size() > 0){
-					muestraConflictos(conflictos);
-					if(!this.avisado){
-						JOptionPane.showMessageDialog(this, "¡Cuidado! ¡Tienes materias solapadas!",
-								"Materias solapadas", JOptionPane.WARNING_MESSAGE, null);
-						this.avisado = true;
-					}
-				}
-				else
-					this.avisado = false;
-			}
-		}
-	}
-	
 	private void eliminaTodas(){
-		this.c.vaciaEscogidasEstudiante();
 		this.listaSeleccionadas.clear();
-		updateTablas();
-		updatetuSeleccion();
 		this.avisado = false;
+		this.c.vaciaEscogidasEstudiante();
+		updatetuSeleccion();
+		actualizaListados(LEVELITINERARIO);
 	}
 	
 	private void updateTablas(){
@@ -727,100 +641,47 @@ public class Ventana extends JFrame {
 		this.segundoQ.setModel(dtm2);
 	}
 	
-	/**
-	 * Comprueba que se ha seleccionado un curso, un grupo y una asignatura
-	 * @return true si se ha seleccionado un elemento de cada lista
-	 */
-	private boolean checkSeleccion(){
-		if(this.asignatura == null || this.grupo == null || this.curso == null)
-			return false;
-		else
-			return true;
-	}
-	
-	private void muestraConflictos(ArrayList<Conflicto> conflictos){
-		boolean tabla[][] = new boolean[12][6];
-		int coordenadas[] = new int[2];
-		Asignatura aux;
-		
-		
-		for (boolean[] row: tabla)
-			Arrays.fill(row, false);
-		
+	public void pintarConflictos(){
 		this.primerQ.setBackground(Color.WHITE);
 		this.segundoQ.setBackground(Color.WHITE);
 		
-		for(Conflicto c : conflictos){
-			aux = c.getAsignaturas().get(0);
-			coordenadas = getCoordenadasTabla(aux);
-			
-			int x = coordenadas[0]; //filas
-			int y = coordenadas[1]; //columnas
-			
-			tabla[x][y] = true;
-			
-			if(aux.getCuatrimestre() == 1){
-				//pintar en el primer Q
-				//System.out.println(this.primerQ.getComponentAt(coordenadas[0], coordenadas[1])).getClass().toString())));;
-				//System.out.println(this.primerQ.getComponentAt(x, y).getComponentAt(x, y).getClass());
-				TableCellRenderer defaultRenderer = this.primerQ.getDefaultRenderer(Object.class);
-				TableCellRenderer nuevoRenderer = new CellBackgroundRenderer(defaultRenderer);
-				for(int i = 1; i < 6; i++){
-					this.primerQ.getColumnModel().getColumn(i).setCellRenderer(nuevoRenderer);
-				}
-			}
-			else{
-				//pintar en el segundo Q
-				//((JTextField)this.segundoQ.getComponentAt(coordenadas[0], coordenadas[1])).setBackground(Color.RED);
-				//System.out.println(this.segundoQ.getComponentAt(x, y).getComponentAt(x, y).getClass());
-				TableCellRenderer defaultRenderer = this.segundoQ.getDefaultRenderer(Object.class);
-				TableCellRenderer nuevoRenderer = new CellBackgroundRenderer(defaultRenderer);
-				for(int i = 1; i < 6; i++){
-					this.segundoQ.getColumnModel().getColumn(i).setCellRenderer(nuevoRenderer);
-				}
-			}
-		}
+//		TableCellRenderer defaultRenderer = this.primerQ.getDefaultRenderer(Object.class);
+//		TableCellRenderer nuevoRenderer = new CellBackgroundRenderer(defaultRenderer);
+//		for(int i = 1; i < 6; i++){
+//			this.primerQ.getColumnModel().getColumn(i).setCellRenderer(nuevoRenderer);
+//		}
 		
+		TableCellRenderer defaultRenderer2 = this.segundoQ.getDefaultRenderer(Object.class);
+		TableCellRenderer nuevoRenderer2 = new CellBackgroundRenderer(defaultRenderer2);
+		
+		TableColumnModel tcm = null;
+		TableColumn tc = null;
+		
+		for(int j = 1; j < 6; j++){
+			tcm = this.segundoQ.getColumnModel(); 
+			tc = tcm.getColumn(j);
+			tc.setCellRenderer(nuevoRenderer2);
+		}
 	}
 	
-	private int[] getCoordenadasTabla(Asignatura a){
-		int coord[] = new int[2];
+	private boolean comprobacion(){
+		boolean ok = true;
 		
-		String dia = ""+ a.getDia();
-		int hora = a.getHora();
+		ok = ok && (this.itinerario != null && this.itinerario.length() > 0);
 		
-		switch (dia.toLowerCase()) {
-			case "l": coord[1] = 1; break;
-			case "m": coord[1] = 2; break;
-			case "x": coord[1] = 3; break;
-			case "j": coord[1] = 4; break;
-			case "v": coord[1] = 5; break;
-			default : break;
-		}		
+		ok = ok && (this.curso != null && this.curso.length() > 0);
 		
-		switch (hora) {
-			case 9:  coord[0] = 1; break;
-			case 10: coord[0] = 2; break;
-			case 11: coord[0] = 3; break;
-			case 12: coord[0] = 4; break;
-			case 13: coord[0] = 5; break;
-			case 14: coord[0] = 6; break;
-			case 15: coord[0] = 7; break;
-			case 16: coord[0] = 8; break;
-			case 17: coord[0] = 9; break;
-			case 18: coord[0] = 10; break;
-			case 19: coord[0] = 11; break;
-			case 20: coord[0] = 12; break;
-			default : break;
-		}
+		ok = ok && (this.grupo != null && this.grupo.length() > 0);
 		
-		return coord;
+		ok = ok && (this.asignatura != null && this.asignatura.length() > 0);
+		
+		return ok;
 	}
 	
 	private void exportaHorario(){
 		File destino = new File("miHorario.csv");
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         chooser.setDialogTitle("Especifica el archivo a guardar");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichero csv", "csv", "csv");
         chooser.setFileFilter(filter);

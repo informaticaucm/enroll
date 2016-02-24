@@ -35,4 +35,9 @@ public class CellBackgroundRenderer implements TableCellRenderer
     }
     return c;
   }
+  
+  @Override
+  public String toString(){
+	  return "CellRenderer Custom";
+  }
 } 

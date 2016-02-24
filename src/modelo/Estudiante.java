@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 /**
  * Clase encargada de guardar todas las materias que vaya escogiendo el usuario
@@ -14,9 +12,8 @@ import java.util.Hashtable;
 
 public class Estudiante {
 
-	//Array<clave,valor> similares a los de PHP
-	// La clave será Cuatrimestre-Dia-Hora (Ej. 1-X-19)
-	private Hashtable<String, ArrayList<Asignatura>> eleccion;
+	//Listado con las entradas de las asignaturas
+	private ArrayList<Asignatura> eleccion;
 	
 	//Indice con los nombres de las asignaturas escogidas a fin de acelerar el proceso de comprobacion
 	private ArrayList<String> nombresEscogidas;
@@ -26,7 +23,7 @@ public class Estudiante {
 	 * Inicializa el Hashtable
 	 */
 	public Estudiante() {
-		this.eleccion = new Hashtable<>();
+		this.eleccion = new ArrayList<>();
 		this.nombresEscogidas = new ArrayList<>();
 	}
 	
@@ -39,17 +36,8 @@ public class Estudiante {
 		boolean exito = true;
 		try
 		{
-			String clave = a.crearClave();
-			if(this.eleccion.containsKey(clave)){
-				this.eleccion.get(clave).add(a);
-				this.nombresEscogidas.add(a.getNombre());
-			}
-			else{
-				ArrayList<Asignatura> listado = new ArrayList<>();
-				listado.add(a);
-				this.eleccion.put(clave, listado);
-				this.nombresEscogidas.add(a.getNombre());
-			}
+			this.eleccion.add(a);
+			insertaNombreSeleccionada(a.getNombre());
 		}
 		catch(Exception e){
 			System.err.println("Error al intentar añadir una asignatura.");
@@ -60,17 +48,26 @@ public class Estudiante {
 		return exito;
 	}
 	
+	private void insertaNombreSeleccionada(String nombre){
+		boolean esta = false;
+		for(String s : this.nombresEscogidas){
+			esta = s.equalsIgnoreCase(nombre);
+		}
+		if(!esta)
+			this.nombresEscogidas.add(nombre);
+	}
+	
 	/**
 	 * Comprueba si una asignatura ya ha sido elegida por el usuario.
-	 * @param a - Asignatura a comprobar
+	 * @param nombre - Asignatura a comprobar
 	 * @return true si ya ha sido elegida.
 	 */
-	public boolean estaElegida(Asignatura a){
-		for(String s : this.nombresEscogidas)
-			if(s.equalsIgnoreCase(a.getNombre()))
-				return true;
-		
-		return false;
+	public boolean estaElegida(String nombre){
+		boolean esta = false;
+		for(String s : this.nombresEscogidas){
+			esta = esta || s.equalsIgnoreCase(nombre);
+		}
+		return esta;
 	}
 	
 	/**
@@ -78,15 +75,7 @@ public class Estudiante {
 	 * @return Asignaturas elegidas
 	 */
 	public ArrayList<Asignatura> getEleccion(){
-		ArrayList<Asignatura> asignaturas = new ArrayList<>();
-		
-		Enumeration<String> e = this.eleccion.keys();
-		while(e.hasMoreElements())
-		{
-			asignaturas.addAll(this.eleccion.get(e.nextElement()));
-		}
-		
-		return asignaturas;
+		return this.eleccion;
 	}
 	
 	/**
@@ -139,25 +128,26 @@ public class Estudiante {
 	 */
 	public boolean quitaAsignatura(String nombre){
 		ArrayList<Asignatura> aux = new ArrayList<>();
-		ArrayList<Asignatura> ptr;
 		
 		try
 		{
-			Enumeration<String> e = this.eleccion.keys();
-			while(e.hasMoreElements())
-			{
-				ptr = this.eleccion.get(e.nextElement());
-				for(Asignatura a : ptr)
-				{
-					if(a.getNombre().equalsIgnoreCase(nombre))
-						aux.add(a);
-				}
-				while(aux.size() > 0)
-				{
-					ptr.remove(aux.get(0));
-					aux.remove(0);
+			for(Asignatura a : this.eleccion){
+				if(a.getNombre().equalsIgnoreCase(nombre)){
+					aux.add(a);
 				}
 			}
+			
+			while(aux.size() > 0){
+				this.eleccion.remove(aux.get(0));
+				aux.remove(0);
+			}
+			
+			String ptr = "";
+			for(String s : this.nombresEscogidas){
+				if(s.equalsIgnoreCase(nombre))
+					ptr = s;
+			}
+			this.nombresEscogidas.remove(ptr);
 		}
 		catch(Exception e)
 		{
@@ -167,6 +157,34 @@ public class Estudiante {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Comprueba si hay conflictos.
+	 * @return true si los hay. false en caso contrario
+	 */
+	public boolean hayConflictos(){
+		boolean hay = false;
+		ArrayList<String> claves = new ArrayList<>();
+		String clave = "";
+		
+		for(Asignatura a: this.eleccion){
+			clave = a.crearClave();
+			if(estaClave(claves, clave))
+				hay = true;
+			else
+				claves.add(clave);
+		}
+		
+		return hay;
+	}
+	
+	private boolean estaClave(ArrayList<String> lista, String clave){
+		for(String s : lista){
+			if(s.contains(clave))
+				return true;
+		}
+		return false;
 	}
 	
 	/**

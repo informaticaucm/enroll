@@ -1,8 +1,6 @@
 package modelo;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 /**
  * Clase encargada de mostrar todas las materias que se extraigan de las consultas a la base de datos
@@ -10,26 +8,10 @@ import java.util.Hashtable;
  */
 public class Oferta {
 
-	//Array<clave,valor> similares a los de PHP
-	private Hashtable<Integer, Asignatura> listado;
-	
-	private ArrayList<String> nombresOfertadas;
+	private ArrayList<Asignatura> listado;
 	
 	public Oferta() {
-		this.listado = new Hashtable<>();
-		this.nombresOfertadas = new ArrayList<>();
-	}
-	
-	/**
-	 * Añade el nombre de una asignatura al listado de ofertadas
-	 * @param nombre - Nombre de la asignatura
-	 * @return true si se pudo insertar
-	 */
-	public boolean addNombreOfertada(String nombre){
-		if(estaInsertada(nombre))
-			return false;
-		this.nombresOfertadas.add(nombre);
-		return true;
+		this.listado = new ArrayList<>();
 	}
 	
 	/**
@@ -37,18 +19,18 @@ public class Oferta {
 	 * @return Listado de Asignaturas ofertadas
 	 */
 	public ArrayList<String> getListadoOfertadas(){
-		return this.nombresOfertadas;
+		ArrayList<String> aux = new ArrayList<>();
+		
+		for(Asignatura a : this.listado)
+			if(!estaNombre(aux, a.getNombre()))
+				aux.add(a.getNombre());
+		
+		return aux;
 	}
 	
-	/**
-	 * Comprueba si una asignatura ya ha sido insertada en nombresOfertadas.
-	 * @param nombre - Asignatura a comprobar
-	 * @return true si ya ha sido elegida.
-	 */
-	public boolean estaInsertada(String nombre){
-		Enumeration<Integer> e = this.listado.keys(); 
-		while(e.hasMoreElements()){
-			if(listado.get(e.nextElement()).getNombre().equalsIgnoreCase(nombre))
+	private boolean estaNombre(ArrayList<String> lista, String nombre){
+		for(String s : lista){
+			if(s.contains(nombre))
 				return true;
 		}
 		return false;
@@ -60,89 +42,41 @@ public class Oferta {
 	 * @return true si ha tenido Ã©xito y false si ya habÃ­a sido escogida.
 	 */
 	public boolean addAsignatura(Asignatura a){
-		boolean exito = true;
-		
-		if(listado.containsKey(a.getId()))
-			return false;
-		
-		this.listado.put(a.getId(), a);
-		
-		return exito;
+		return this.listado.add(a);
 	}
 	
-	/**
-	 * Obtiene el listado de asignaturas de un curso, grupo e itinerario seleccionados
-	 * @param curso - Curso seleccionado
-	 * @param grupo - Grupo seleccionado
-	 * @param itinerario - Itinerario seleccionado
-	 * @return Listado de asignaturas de ese curso, grupo e itinerario
-	 */
-	public ArrayList<Asignatura> getAsignaturasCursoGrupoIt(int curso, char grupo, char itinerario){
-		ArrayList<Asignatura> entradas = new ArrayList<>();
-		
-		char noIt = ' '; //Itinerario opuesto al escogido
-		if(itinerario == 'I')
-			noIt = 'C';
-		else
-			noIt = 'I';
-		Enumeration<Integer> e = this.listado.keys(); 
-		while(e.hasMoreElements()){
-			Asignatura a = this.listado.get(e.nextElement());
-			if(a.getCurso() == curso || a.getCurso() == 0) //Curso 
-				if(a.getGrupo() == grupo || a.getCurso() == 0) //Grupo -> En caso de ser general, solo suele haber grupo A
-					if(a.getItinerario() != noIt) //!=Itinerario
-							entradas.add(a);
-		}
-		
-		return entradas;
-	}
 	
-	/**
-	 * Devuelve un listado con todas las entradas de horario de la materia del curso, grupo e itinerario indicados 
-	 * @param curso - Curso indicado
-	 * @param grupo - Grupo indicado
-	 * @param itinerario - Itinerario indicado
-	 * @param nombre - Nombre de la asignatura
-	 * @return ArrayList con las entradas de horario
-	 */
-	public ArrayList<Asignatura> getAsignatura(int curso, char grupo, char itinerario, String nombre){
-		ArrayList<Asignatura> entradas = new ArrayList<>();
-		
-		char noIt = ' '; //Itinerario opuesto al escogido
-		if(itinerario == 'I')
-			noIt = 'C';
-		else
-			noIt = 'I';
-		Enumeration<Integer> e = this.listado.keys(); 
-		while(e.hasMoreElements()){
-			Asignatura a = this.listado.get(e.nextElement());
-			if(a.getCurso() == curso || a.getCurso() == 0) //Curso 
-				if(a.getGrupo() == grupo || a.getCurso() == 0) //Grupo -> En caso de ser general, solo suele haber grupo A
-					if(a.getItinerario() != noIt) //!=Itinerario
-						if(a.getNombre().equalsIgnoreCase(nombre)) //Nombre
-							entradas.add(a);
-		}
-		
-		return entradas;
-	}
 	
 	/**
 	 * Intenta añadir un listado de asignaturas al horario.
-	 * @param listado - Asginaturas a aÃ±adir
-	 * @return NÃºmero de inserciones con Ã©xito
+	 * @param listado - Asginaturas a añadir
+	 * @return Numero de inserciones con éxito
 	 */
 	public int addAsignaturas(ArrayList<Asignatura> listado){
 		int exitos = 0;
 		
 		for(Asignatura a : listado)
 		{
-			if(!this.listado.containsKey(a.getId()))
-			{
-				this.listado.put(a.getId(), a);
+			if(addAsignatura(a))
 				exitos++;
-			}
 		}
+		
 		return exitos;
+	}
+	
+	/**
+	 * Devuelve un listado con todas las entradas de horario de la materia del curso, grupo e itinerario indicados 
+	 * @param nombre - Nombre de la asignatura
+	 * @return ArrayList con las entradas de horario
+	 */
+	public ArrayList<Asignatura> getAsignatura(String nombre){
+		ArrayList<Asignatura> asignaturas = new ArrayList<>();
+		
+		for(Asignatura a : this.listado)
+			if(a.getNombre().equalsIgnoreCase(nombre))
+				asignaturas.add(a);
+		
+		return asignaturas;
 	}
 	
 	/**
@@ -150,37 +84,21 @@ public class Oferta {
 	 * @param a - La asignatura completa
 	 * @return true si se pudo eliminar la materia del listado.
 	 */
-	public boolean quitaAsignatura(Asignatura a){
-		boolean eliminado = false;
-		
-		Enumeration<Integer> e = this.listado.keys();
-		while (e.hasMoreElements()) {
-			int clave = e.nextElement();
-			if(this.listado.get(clave).getNombre().equalsIgnoreCase(a.getNombre())){
-				this.listado.remove(clave);
-				eliminado = true;
-			}
-		}
-		return eliminado;
-	}
-	
-	/**
-	 * Elimina una asignatura de la lista de ofertadas
-	 * @param nombre - El nombre de la asignatura a borrar
-	 * @return true si se pudo eliminar la materia del listado.
-	 */
 	public boolean quitaAsignatura(String nombre){
-		boolean eliminado = false;
+		ArrayList<Asignatura> ptr = getAsignatura(nombre);
+		boolean exito = true;
 		
-		Enumeration<Integer> e = this.listado.keys();
-		while (e.hasMoreElements()) {
-			int clave = e.nextElement();
-			if(this.listado.get(clave).getNombre().equalsIgnoreCase(nombre)){
-				this.listado.remove(clave);
-				eliminado = true;
+		try{
+			while(ptr.size() > 0){
+				this.listado.remove(ptr.get(0));
+				ptr.remove(0);
 			}
 		}
-		return eliminado;
+		catch(Exception e){
+			exito = false;
+		}
+		
+		return exito;
 	}
 	
 	/**

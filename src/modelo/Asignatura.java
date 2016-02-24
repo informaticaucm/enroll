@@ -87,8 +87,17 @@ public class Asignatura {
 	}
 	
 	/**
+	 * Comprueba si la asignatura es igual a la pasada como parámetro
+	 * @param a - Asignatura a comprobar
+	 * @return true si son la misma asignatura
+	 */
+	public boolean es(Asignatura a){
+		return crearClave().equalsIgnoreCase(a.crearClave());
+	}
+	
+	/**
 	 * Genera una cadena del tipo "cuatrimestre-dia-hora" con los datos de la asignatura
-	 * @return
+	 * @return Una cadena del tipo "cuatrimestre-dia-hora"
 	 */
 	public String crearClave(){
 		return this.cuatrimestre + "-" + this.dia + "-" + this.hora;
